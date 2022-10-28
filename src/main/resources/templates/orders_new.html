@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>JEGGER</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav_logo">
+    <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+  </div>
+  <div class="nav_menu">
+    <ul>
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+      <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+      <li><a href="#">Raporty</a></li>
+      <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+    </ul>
+  </div>
+  <div class="nav_logout">
+    <button>Wyloguj</button>
+  </div>
+</nav>
+<div class="page_content">
+  <div class="orders_header">
+    <div class="orders_header_first">
+      <span class="orders_header_first_text">Nowe rozliczenie</span>
+    </div>
+    <div class="orders_header_second"></div>
+  </div>
+  <div class="orders_new_container">
+    <div class="orders_new_content">
+      <form id="newPayoff" th:action="@{/rozliczenia/new/submit}" method="post">
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Numer zlecenia</span>
+          <input type="text" required="required" th:name="@{nr_zlec}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Numer faktury</span>
+          <input type="text" required="required" th:name="@{nr_fakt}" id="nr_fakt">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota faktury</span>
+          <input type="number" required="required" min="1" th:name="@{kw_fakt}" id="kw_fakt">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota początkowa</span>
+          <input type="number" required="required" min="1" th:name="@{kw_pocz}" id="kw_pocz">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Rabat</span>
+          <select required="required" id="rabat" onchange="val()" th:name="@{rabat}">
+            <option hidden value>...</option>
+            <option value="10">10%</option>
+            <option value="12">12%</option>
+          </select>
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota po rabacie</span>
+          <input type="number" readonly="readonly" value="---" th:name="@{kw_rabat}" id="kw_rabat">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <input type="number" readonly="readonly" value="---" th:name="@{kw_rozl}" id="kw_rozl">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dealer</span>
+          <select required="required" id="dealer" th:name="@{dealer}">
+            <option hidden value>...</option>
+            <option value="Adam">Adam</option>
+            <option value="Patryk">Patryk</option>
+          </select>
+        </div>
+        <div class="orders_new_submit_holder">
+          <input class="orders_new_submit" id="orders_new_submit_next" type="submit" value="Dalej">
+        </div>
+      </form>
+      <p class="order_already_in_database"></p>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="footer_content">
+    Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+  </div>
+</footer>
+<script>
+  function val() {
+    const kw_pocz = document.querySelector('#kw_pocz');
+    let rabat = (1 - (document.querySelector('#rabat').value / 100));
+    const kw_rabat = document.querySelector('#kw_rabat');
+    const kw_rozl = document.querySelector('#kw_rozl');
+
+    let result = kw_pocz.value * rabat;
+
+    kw_rabat.value = Math.round((result + Number.EPSILON) * 100) / 100;
+
+    kw_rozl.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
+  }
+</script>
+</body>
+</html>

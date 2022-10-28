@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>JEGGER</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav_logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+    </div>
+    <div class="nav_menu">
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+        </ul>
+    </div>
+    <div class="nav_logout">
+        <button>Wyloguj</button>
+    </div>
+</nav>
+<div class="page_content">
+    <div class="orders_header">
+        <div class="orders_header_first">
+            <span class="orders_header_first_text">Szczegóły rozliczenia</span>
+        </div>
+        <div class="orders_header_second"></div>
+    </div>
+    <div class="orders_details_container">
+        <div class="orders_details_left">
+            <table>
+                <thead>
+                <tr>
+                    <th>Szczegół</th>
+                    <th>Wartość</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="table_left_align">Numer ID</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.id}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Data dodania</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderSubmitDate}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Numer zlecenia</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.orderNumber}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Numer faktury</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoiceNumber}"></form></td>
+                </tr>
+                <tr class="orders_table_divider">
+                    <td class="table_left_align">Kwota faktury</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoicePrice} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Kwota początkowa</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.originalPrice} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Rabat</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discount} + '%'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Kwota po rabacie</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discountPrice} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Kwota rozliczenia</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.finalPrice} + ' PLN'"></form></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="orders_details_right">
+            <table id="orders_details_table">
+                <thead>
+                <tr>
+                    <th>Rozliczenie</th>
+                    <th>Dealer</th>
+                    <th>Handlowiec</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="table_left_align">Prowizja</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.commision} + ' PLN'"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.commision} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Nazwa</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.name}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.name}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Kwota</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.price} + ' PLN'"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.price} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Dokument</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.document}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.document}"></form></td>
+                </tr>
+                <tr class="orders_table_divider">
+                    <td class="table_left_align">Data rozliczenia</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerDate}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecDate}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Akceptacja</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptance}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptance}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Data akceptacji</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptanceDate}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptanceDate}"></form></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer_content">
+        Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+    </div>
+</footer>
+</body>
+</html>

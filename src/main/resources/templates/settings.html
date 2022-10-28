@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>JEGGER</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" type="text/css"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav_logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+    </div>
+    <div class="nav_menu">
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+        </ul>
+    </div>
+    <div class="nav_logout">
+        <button>Wyloguj</button>
+    </div>
+</nav>
+<div class="page_content">
+    <div class="settings_container">
+        <div class="settings_menu">
+            <a onclick="tabs(0)" class="tab active"><i class="fa-solid fa-user"></i></a>
+            <a id="settings_password" onclick="tabs(1)" class="tab"><i class="fa fa-light fa-user-pen"></i></a>
+        </div>
+        <div class="settings_content">
+            <div class="settings_content_info tabShow">
+                <h1>Moje konto</h1>
+                <h2>DANE</h2>
+                <input type="text" readonly="readonly" value="Adrian Majewski">
+                <h2>STANOWISKO</h2>
+                <input type="text" readonly="readonly" value="Doradca">
+                <h2>EMAIL</h2>
+                <input type="text" readonly="readonly" value="adrian.majewski1976@gmail.com">
+                <h2>HASŁO</h2>
+                <input type="password" readonly="readonly" value="12345678900987665423">
+            </div>
+            <div class="settings_content_password tabShow">
+                <h1>Zmień hasło</h1>
+                <h2>EMAIL</h2>
+                <form>
+                    <input type="text" placeholder="example@email.com">
+                    <h2>HASŁO</h2>
+                    <input type="password" placeholder="Nowe hasło">
+                    <h2>POWTÓRZ HASŁO</h2>
+                    <input type="password" placeholder="Powtórz hasło">
+                    <input type="submit" class="settings_password_update" value="Zapisz">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer_content">
+        Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+    </div>
+</footer>
+<script>
+    const tabBtn = document.querySelectorAll(".tab");
+    const tab = document.querySelectorAll(".tabShow");
+
+    function tabs(index) {
+        tab.forEach(function (node) {
+           node.style.display = "none";
+        });
+        tab[index].style.display = "block";
+    }
+    tabs(0);
+</script>
+<script>
+    $(".tab").click(function () {
+       $(this).addClass("active").siblings().removeClass("active");
+    })
+</script>
+</body>
+</html>

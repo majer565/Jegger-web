@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>JEGGER</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+  <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css}" type="text/css"/>
+
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav_logo">
+    <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+  </div>
+  <div class="nav_menu">
+    <ul>
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+      <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+      <li><a href="#">Raporty</a></li>
+      <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+    </ul>
+  </div>
+  <div class="nav_logout">
+    <button>Wyloguj</button>
+  </div>
+</nav>
+<div class="page_content">
+  <div class="orders_header">
+    <div class="orders_header_first">
+      <span class="orders_header_first_text">Modyfikuj rozliczenie</span>
+    </div>
+    <div class="orders_header_second"></div>
+  </div>
+  <div class="orders_new_container">
+    <div class="orders_new_content">
+      <form id="addPayoff" th:action="@{/rozliczenia/modify/submit}" method="post">
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Numer zlecenia</span>
+          <input type="text" readonly="readonly" th:name="@{nr_zlec}" th:value="${completeOrder.order.orderNumber}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Numer faktury</span>
+          <input type="text" required="required" th:name="@{nr_fakt}" th:value="${completeOrder.order.invoiceNumber}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota faktury</span>
+          <input type="number" required="required" th:name="@{kw_fakt}" min="1" th:value="${completeOrder.order.invoicePrice}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dealer</span>
+          <input type="text" required="required" th:name="@{dealer}" th:value="${completeOrder.orderDealer.name}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Handlowiec Dealera</span>
+          <input type="text" required="required" th:name="@{handl_dealer}" th:value="${completeOrder.orderHandlowiec.name}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota początkowa</span>
+          <input type="number" required="required" id="kw_pocz" min="1" th:name="@{kw_pocz}" th:value="${completeOrder.order.originalPrice}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Rabat</span>
+          <select required="required" id="rabat" onchange="val()" th:name="@{rabat}">
+            <option value="10">10%</option>
+            <option value="12">12%</option>
+          </select>
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota po rabacie</span>
+          <input type="number" readonly="readonly" min="1" id="kw_rabat" th:name="@{kw_rabat}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <input type="text" readonly="readonly" id="kw_rozl" th:name="@{kw_rozl}">
+        </div>
+        <div class="orders_new_submit_holder">
+          <input class="orders_modify_submit" type="submit" value="Modyfikuj rozliczenie">
+        </div>
+      </form>
+      <p id="order_already_in_database"></p>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="footer_content">
+    Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+  </div>
+</footer>
+<script>
+  function val() {
+    const kw_pocz = document.querySelector('#kw_pocz');
+    let rabat = (1 - (document.querySelector('#rabat').value / 100));
+    const kw_rabat = document.querySelector('#kw_rabat');
+    const kw_rozl = document.querySelector('#kw_rozl');
+
+    let result = kw_pocz.value * rabat;
+
+    kw_rabat.value = Math.round((result + Number.EPSILON) * 100) / 100;
+
+    kw_rozl.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
+  }
+</script>
+</body>
+</html>

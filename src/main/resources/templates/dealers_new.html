@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>JEGGER</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav_logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+    </div>
+    <div class="nav_menu">
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+        </ul>
+    </div>
+    <div class="nav_logout">
+        <button>Wyloguj</button>
+    </div>
+</nav>
+<div class="page_content">
+    <div class="orders_header">
+        <div class="orders_header_first">
+            <span class="orders_header_first_text">Nowy Dealer</span>
+        </div>
+        <div class="orders_header_second"></div>
+    </div>
+    <div class="orders_new_container">
+        <div class="orders_new_content">
+            <form th:action="@{/dealerzy/new/add}" method="post">
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">Nazwa Dealera</span>
+                    <input type="text" required="required" th:name="@{name}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">Oddział</span>
+                    <input type="text" required="required" th:name="@{branch}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">NIP</span>
+                    <input type="number" required="required" min="1" th:name="@{nip}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">REGON</span>
+                    <input type="text" required="required" th:name="@{regon}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">Ulica</span>
+                    <input type="text" required="required" th:name="@{street}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">Kod pocztowy</span>
+                    <input type="number" required="required" min="1" th:name="@{postcode}">
+                </div>
+                <div class="orders_new_input_box">
+                    <span class="orders_new_input_details">Miasto</span>
+                    <input type="text" required="required" th:name="@{city}">
+                </div>
+                <div class="orders_new_submit_holder">
+                    <input class="orders_new_submit" type="submit" value="Dodaj Dealera">
+                </div>
+            </form>
+            <p id="order_already_in_database"></p>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer_content">
+        Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+    </div>
+</footer>
+</body>
+</html>

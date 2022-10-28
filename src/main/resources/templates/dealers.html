@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>JEGGER</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav_logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+    </div>
+    <div class="nav_menu">
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+        </ul>
+    </div>
+    <div class="nav_logout">
+        <button>Wyloguj</button>
+    </div>
+</nav>
+<div class="page_content">
+    <div class="orders_header">
+        <div class="orders_header_first">
+            <span class="orders_header_first_text">Dealerzy</span>
+        </div>
+        <div class="orders_header_second">
+            <ul>
+                <li><a th:href="@{/dealerzy}">Lista Dealerów</a></li>
+                <li><a th:href="@{/dealerzy/new}">Dodaj Dealera</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="dealers_table_container">
+        <div class="orders_table_content">
+            <table id="dealers_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dealer</th>
+                        <th>NIP</th>
+                        <th>Miejscowość</th>
+                        <th>Szczegóły</th>
+                        <th>Modyfikuj Dealera</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dealer: ${dealerList}">
+                        <td th:text="${dealer.id}"></td>
+                        <td th:text="${dealer.company}"></td>
+                        <td th:text="${dealer.nip}"></td>
+                        <td th:text="${dealer.city}"></td>
+                        <td>
+                            <a th:href="@{/dealerzy/details(id=${dealer.id})}"><button type="button" class="orders_table_info_button">INFO</button></a>
+                        </td>
+                        <td>
+                            <a th:href="@{/dealerzy/modify(id=${dealer.id})}"><button type="button" class="orders_table_info_button">UPDATE</button></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer_content">
+        Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+    </div>
+</footer>
+</body>
+</html>

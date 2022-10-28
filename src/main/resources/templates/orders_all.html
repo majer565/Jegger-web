@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>JEGGER</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav_logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+    </div>
+    <div class="nav_menu">
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+        </ul>
+    </div>
+    <div class="nav_logout">
+        <button>Wyloguj</button>
+    </div>
+</nav>
+<div class="page_content">
+    <div class="orders_header">
+        <div class="orders_header_first">
+            <span class="orders_header_first_text">Wszystkie rozliczenia</span>
+        </div>
+        <div class="orders_header_second">
+            <ul>
+                <li><a id="orders_showAllPayoffs" th:href="@{/rozliczenia}">Wszystkie rozliczenia</a></li>
+                <li><a id="orders_showOpenPayoffs" th:href="@{/rozliczenia/open}">Otwarte rozliczenia</a></li>
+                <li><a id="orders_newPayoff" th:href="@{/rozliczenia/new}">Nowe rozliczenie</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="orders_table_container">
+        <div class="orders_table_content">
+            <table id="orders_table_all_payoffs">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Handlowiec</th>
+                    <th>Numer zlecenia</th>
+                    <th>Numer faktury</th>
+                    <th>Kwota faktury</th>
+                    <th>Nazwa Dealera</th>
+                    <th>Handlowiec Dealera</th>
+                    <th>Szczegóły</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="completeOrder: ${completeOrderList}">
+                        <td th:text="${completeOrder.order.id}"></td>
+                        <td th:text="${completeOrder.user.handlowiec}"></td>
+                        <td th:text="${completeOrder.order.orderNumber}"></td>
+                        <td th:text="${completeOrder.order.invoiceNumber}"></td>
+                        <td th:text="${completeOrder.order.invoicePrice} + ' PLN'"></td>
+                        <td th:text="${completeOrder.orderDealer.name}"></td>
+                        <td th:text="${completeOrder.orderHandlowiec.name}"></td>
+                        <td>
+                            <a th:href="@{/rozliczenia/details(nr=${completeOrder.order.orderNumber})}"><button type="button" class="orders_table_info_button">INFO</button></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer_content">
+        Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+    </div>
+</footer>
+</body>
+</html>
