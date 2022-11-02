@@ -96,19 +96,14 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="table_left_align">Prowizja</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.commision} + ' PLN'"></form></td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.commision} + ' PLN'"></form></td>
+                    <td class="table_left_align">Kwota</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.price} + ' PLN'"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.price} + ' PLN'"></form></td>
                 </tr>
                 <tr>
                     <td class="table_left_align">Nazwa</td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.name}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.name}"></form></td>
-                </tr>
-                <tr>
-                    <td class="table_left_align">Kwota</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.price} + ' PLN'"></form></td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.price} + ' PLN'"></form></td>
                 </tr>
                 <tr>
                     <td class="table_left_align">Dokument</td>

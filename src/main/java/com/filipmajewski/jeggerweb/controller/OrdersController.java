@@ -2,21 +2,22 @@ package com.filipmajewski.jeggerweb.controller;
 
 import com.filipmajewski.jeggerweb.container.CompleteOrder;
 import com.filipmajewski.jeggerweb.container.NewOrderDetails;
-import com.filipmajewski.jeggerweb.entity.Order;
-import com.filipmajewski.jeggerweb.entity.OrderDealer;
-import com.filipmajewski.jeggerweb.entity.OrderHandlowiec;
-import com.filipmajewski.jeggerweb.entity.User;
+import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -26,10 +27,15 @@ public class OrdersController {
     private OrderRepository orderRepository;
 
     @Autowired
+    private DealerRepository dealerRepository;
+    @Autowired
     private OrderDealerRepository orderDealerRepository;
 
     @Autowired
     private OrderHandlowiecRepository orderHandlowiecRepository;
+
+    @Autowired
+    private DealerHandlowcyRepository dealerHandlowcyRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -40,10 +46,8 @@ public class OrdersController {
     @Autowired
     private EventRepository eventRepository;
 
-    private Map<String, NewOrderDetails> orderContainer = new HashMap<>();
-
     @RequestMapping(value = "/rozliczenia/details", method = RequestMethod.GET)
-    public ModelAndView orderDetails(@RequestParam String nr) {
+    public ModelAndView orderDetails(@RequestParam int nr) {
 
         ModelAndView mv = new ModelAndView();
 
@@ -82,7 +86,8 @@ public class OrdersController {
                                           @RequestParam("rabat") Integer rabat,
                                           @RequestParam("kw_rabat") Double kw_rabat,
                                           @RequestParam("kw_rozl") Double kw_rozl,
-                                          @RequestParam("dealer") String dealer) {
+                                          @RequestParam("dealer") int dealer,
+                                          HttpSession session) {
 
         ModelAndView mav = new ModelAndView("orders_new_next.html");
 
@@ -91,14 +96,15 @@ public class OrdersController {
         //https://www.codejava.net/frameworks/spring-boot/spring-boot-thymeleaf-form-handling-tutorial
         //https://stackoverflow.com/questions/51560702/how-to-set-up-spring-form-and-thymeleaf-to-not-changing-the-fields-of-object-add
 
-        NewOrderDetails nod = new NewOrderDetails(nr_fakt, kw_fakt, kw_pocz, rabat, kw_rabat, kw_rozl, dealer);
+        NewOrderDetails nod = new NewOrderDetails(nr_zlec, nr_fakt, kw_fakt, kw_pocz, rabat, kw_rabat, kw_rozl, dealer);
 
-        orderContainer.put(nr_fakt, nod);
+        session.setAttribute("newOrderDetails", nod);
+
+        List<DealerHandlowcy> dealerHandlowcyList = dealerHandlowcyRepository.findAllByDealerID(dealer);
+        dealerHandlowcyList.sort(Comparator.comparing(DealerHandlowcy::getHandlowiec));
 
         mav.addObject("newOrder", nod);
-
-        System.out.println(orderContainer.values());
-        System.out.println(nr_fakt);
+        mav.addObject("handlowcy", dealerHandlowcyList);
 
         return mav;
     }
@@ -107,23 +113,31 @@ public class OrdersController {
     public String newOrderPageSecondAdd(@RequestParam("hn_dealer") String hn_dealer,
                                         @RequestParam("kw_dealer") Double kw_dealer,
                                         @RequestParam("kw_handl") Double kw_handl,
-                                        @RequestParam("nr_fakt") String nr_fakt) {
+                                        @RequestParam("nr_fakt") String nr_fakt,
+                                        HttpSession session) {
 
-        NewOrderDetails nod = orderContainer.get(nr_fakt);
+        NewOrderDetails nod = (NewOrderDetails) session.getAttribute("newOrderDetails");
+
+        try {
+
+            Dealer dealer = dealerRepository.findById(nod.getDealer()).orElse(new Dealer());
+
+            Order order = new Order();
+
+        } catch (NullPointerException e) {
+
+        }
 
         System.out.println(nr_fakt);
         System.out.println(nod.getKwfakt());
         System.out.println(nod.getKwpocz());
-        System.out.println(nod.getKwrabat());
+        System.out.println(nod.getRabat());
         System.out.println(nod.getKwrabat());
         System.out.println(nod.getKwrozl());
         System.out.println(nod.getDealer());
         System.out.println(hn_dealer);
         System.out.println(kw_dealer);
         System.out.println(kw_handl);
-
-        System.out.println(orderContainer.values());
-        orderContainer.remove(nr_fakt);
 
         return "redirect:/rozliczenia/new";
     }
@@ -133,14 +147,6 @@ public class OrdersController {
                                          @RequestParam("kw_dealer") Double kw_dealer,
                                          @RequestParam("kw_handl") Double kw_handl) {
 
-        System.out.println(orderContainer.get("nr_zlec"));
-        System.out.println(orderContainer.get("nr_fakt"));
-        System.out.println(orderContainer.get("kw_fakt"));
-        System.out.println(orderContainer.get("kw_pocz"));
-        System.out.println(orderContainer.get("rabat"));
-        System.out.println(orderContainer.get("kw_rabat"));
-        System.out.println(orderContainer.get("kw_rozl"));
-        System.out.println(orderContainer.get("dealer"));
         System.out.println(hn_dealer);
         System.out.println(kw_dealer);
         System.out.println(kw_handl);
@@ -149,7 +155,7 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/rozliczenia/modify", method = RequestMethod.GET)
-    public ModelAndView modifyOrder(@RequestParam String nr) {
+    public ModelAndView modifyOrder(@RequestParam int nr) {
 
         ModelAndView mv = new ModelAndView();
 

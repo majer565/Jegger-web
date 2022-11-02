@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -98,8 +98,17 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/rozliczenia/new", method = RequestMethod.GET)
-    public String clearanceNewPage() {
-        return "orders_new.html";
+    public ModelAndView clearanceNewPage() {
+
+        ModelAndView mv = new ModelAndView("orders_new.html");
+
+        List<Dealer> dealerList = dealerRepository.findAll();
+
+        dealerList.sort(Comparator.comparing(Dealer::getCompany));
+
+        mv.addObject("dealerList", dealerList);
+
+        return mv;
     }
 
     @RequestMapping(value = "/dealerzy", method = RequestMethod.GET)

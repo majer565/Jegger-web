@@ -1,9 +1,6 @@
 package com.filipmajewski.jeggerweb.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -14,9 +11,12 @@ public class Order {
     private int id;
 
     private Timestamp date;
+    @Column(name = "old_order_number")
+    private String oldOrderNumber;
 
+    @GeneratedValue
     @Column(name = "order_number")
-    private String orderNumber;
+    private int orderNumber;
 
     @Column(name = "invoice_number")
     private String invoiceNumber;
@@ -51,7 +51,32 @@ public class Order {
     @Column(name = "handlowiec_acceptance_date")
     private Timestamp handlowiecAcceptanceDate;
 
+    @GeneratedValue
     private int historyID;
+
+    public Order() {}
+
+    public Order(String oldOrderNumber,
+                 String invoiceNumber,
+                 double invoicePrice,
+                 double originalPrice,
+                 int discount,
+                 double discountPrice,
+                 double finalPrice,
+                 int userID) {
+
+        this.date = new Timestamp(System.currentTimeMillis());
+        this.oldOrderNumber = oldOrderNumber;
+        this.invoiceNumber = invoiceNumber;
+        this.invoicePrice = invoicePrice;
+        this.originalPrice = originalPrice;
+        this.discount = discount;
+        this.discountPrice = discountPrice;
+        this.finalPrice = finalPrice;
+        this.userID = userID;
+        this.dealerAcceptance = false;
+        this.handlowiecAcceptance = false;
+    }
 
     public int getId() {
         return id;
@@ -69,11 +94,11 @@ public class Order {
         this.date = date;
     }
 
-    public String getOrderNumber() {
+    public int getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(String orderNumber) {
+    public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
 
@@ -171,5 +196,13 @@ public class Order {
 
     public void setHistoryID(int historyID) {
         this.historyID = historyID;
+    }
+
+    public String getOldOrderNumber() {
+        return oldOrderNumber;
+    }
+
+    public void setOldOrderNumber(String oldOrderNumber) {
+        this.oldOrderNumber = oldOrderNumber;
     }
 }

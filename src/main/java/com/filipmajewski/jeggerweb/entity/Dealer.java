@@ -28,6 +28,20 @@ public class Dealer {
 
     private String city;
 
+    public Dealer() {
+    }
+
+    public Dealer(String company, String branch, long nip, long regon, String street, int postcode, String city) {
+        this.date = new Timestamp(System.currentTimeMillis());
+        this.company = company;
+        this.branch = branch;
+        this.nip = nip;
+        this.regon = regon;
+        this.street = street;
+        this.postcode = postcode;
+        this.city = city;
+    }
+
     public int getId() {
         return id;
     }

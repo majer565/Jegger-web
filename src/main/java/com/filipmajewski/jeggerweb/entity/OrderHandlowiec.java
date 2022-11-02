@@ -17,16 +17,11 @@ public class OrderHandlowiec {
 
     private int orderID;
 
-    private int commision;
-
     private String name;
 
     private double price;
 
     private String document;
-
-    @Column(name = "order_date")
-    private Timestamp orderDate;
 
     public int getId() {
         return id;
@@ -50,14 +45,6 @@ public class OrderHandlowiec {
 
     public void setOrderID(int orderID) {
         this.orderID = orderID;
-    }
-
-    public int getCommision() {
-        return commision;
-    }
-
-    public void setCommision(int commision) {
-        this.commision = commision;
     }
 
     public String getName() {
@@ -84,11 +71,4 @@ public class OrderHandlowiec {
         this.document = document;
     }
 
-    public Timestamp getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Timestamp orderDate) {
-        this.orderDate = orderDate;
-    }
 }

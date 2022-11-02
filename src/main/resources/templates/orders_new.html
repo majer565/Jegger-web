@@ -39,7 +39,7 @@
     <div class="orders_new_content">
       <form id="newPayoff" th:action="@{/rozliczenia/new/submit}" method="post">
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Numer zlecenia</span>
+          <span class="orders_new_input_details">Stary numer zlecenia</span>
           <input type="text" required="required" th:name="@{nr_zlec}">
         </div>
         <div class="orders_new_input_box">
@@ -74,8 +74,7 @@
           <span class="orders_new_input_details">Dealer</span>
           <select required="required" id="dealer" th:name="@{dealer}">
             <option hidden value>...</option>
-            <option value="Adam">Adam</option>
-            <option value="Patryk">Patryk</option>
+            <option th:each="p : ${dealerList}" th:value="${p.id}" th:text="${p.company}" />
           </select>
         </div>
         <div class="orders_new_submit_holder">

@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>JEGGER</title>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
-    <link rel="icon" type="image/x-icon" href="/static/images/ikona.jpg">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
-    <script src="../static/js/main.js"></script>
+    <script th:src="@{/js/main.js}"></script>
 </head>
 <body>
 <nav class="navbar">
     <div class="nav_logo">
-        <img src="../static/images/logo_long.jpg" alt="JEGGER logo">
+        <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
     </div>
     <div class="nav_menu">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Rozliczenia</a></li>
-            <li><a href="#">Dealrzy</a></li>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+            <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
             <li><a href="#">Raporty</a></li>
-            <li><a href="#">Ustawienia</a></li>
+            <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
         </ul>
     </div>
     <div class="nav_logout">
@@ -39,44 +38,38 @@
     </div>
     <div class="orders_new_container">
         <div class="orders_new_content">
-            <form id="addPayoff">
+            <form id="addPayoff" th:action="@{/dealerzy/modify/submit}" method="post">
                 <div class="orders_new_input_box">
-          <span class="orders_new_input_details">
-            Numer ID <i id="fav-awesome-info-icon" class="fa-regular fa-circle-question fa-xs"></i>
-            <span class="id_tooltip">Modyfikuj Dealera wprowadzając jego numer ID</span>
-          </span>
-                    <input type="number" required="required" min="1">
-                </div>
-                <div class="orders_new_input_box">
-                    <span class="orders_new_input_details">Firma</span>
-                    <input type="text" required="required" value="Kancelaria Doradztwa Finansowego">
+                    <span class="orders_new_input_details">Nazwa</span>
+                    <input type="text" required="required" th:name="@{company}" th:value="${dealer.company}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">Oddział</span>
-                    <input type="text" required="required" value="Doradztwo">
+                    <input type="text" required="required" th:name="@{branch}" th:value="${dealer.branch}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">NIP</span>
-                    <input type="number" required="required" min="1" value="0123456789">
+                    <input type="number" required="required" min="1" th:name="@{nip}" th:value="${dealer.nip}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">REGON</span>
-                    <input type="text" required="required" value="0987654321">
+                    <input type="text" required="required" th:name="@{regon}" th:value="${dealer.regon}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">Ulica</span>
-                    <input type="text" required="required" value="Jesionowa 10">
+                    <input type="text" required="required" th:name="@{street}" th:value="${dealer.street}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">Kod pocztowy</span>
-                    <input type="number" required="required" min="1" value="63820">
+                    <input type="number" required="required" min="1" th:name="@{postcode}" th:value="${dealer.postcode}">
                 </div>
                 <div class="orders_new_input_box">
                     <span class="orders_new_input_details">Miasto</span>
-                    <input type="text" required="required" value="Piaski">
+                    <input type="text" required="required" th:name="@{city}" th:value="${dealer.city}">
+                    <input type="hidden" th:value="${dealer.id}" th:name="@{id}">
                 </div>
                 <div class="orders_new_submit_holder">
-                    <input class="orders_modify_submit" type="submit" value="Modyfikuj rozliczenie">
+                    <input class="orders_modify_submit" type="submit" value="Modyfikuj dealera">
                 </div>
             </form>
             <p id="order_already_in_database"></p>

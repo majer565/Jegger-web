@@ -26,16 +26,26 @@ public class DealersController {
     @RequestMapping(value = "/dealerzy/new/add", method = RequestMethod.POST)
     public ModelAndView addDealer(@RequestParam("name") String name,
                                   @RequestParam("branch") String branch,
-                                  @RequestParam("nip") String nip,
-                                  @RequestParam("regon") String regon,
+                                  @RequestParam("nip") long nip,
+                                  @RequestParam("regon") long regon,
                                   @RequestParam("street") String street,
                                   @RequestParam("postcode") Integer postcode,
                                   @RequestParam("city") String city) {
 
-        ModelAndView model = new ModelAndView("redirect:/dealerzy/new");
+        ModelAndView model = new ModelAndView("redirect:/dealerzy");
+        Dealer dealer = dealerRepository.findByNip(nip);
+        //Add try catch to control existing dealer
 
-        //Add error handler
+        if(name.length() > 128 || branch.length() > 128 || street.length() > 64 || city.length() > 64) {
 
+            //Add error handler
+
+            return model;
+        }
+
+        dealerRepository.save(new Dealer(name, branch, nip, regon, street, postcode, city));
+
+        //Add message to model
 
         return model;
     }
@@ -60,6 +70,67 @@ public class DealersController {
         }
 
         return mv;
+    }
+
+    @RequestMapping(value = "/dealerzy/modify", method = RequestMethod.GET)
+    public ModelAndView modifyDealerPage(@RequestParam int id) {
+
+        ModelAndView mv = new ModelAndView();
+
+        Dealer dealer = dealerRepository.findById(id).orElse(new Dealer());
+
+        if(dealer.getCompany() != null) {
+
+            mv.addObject("dealer", dealer);
+            mv.setViewName("dealers_modify.html");
+
+        } else {
+            //Add error handler
+            mv.setViewName("redirect:/dealerzy");
+        }
+
+        return mv;
+    }
+
+    @RequestMapping(value = "/dealerzy/modify/submit", method = RequestMethod.POST)
+    public ModelAndView modifyDealer(@RequestParam("company") String company,
+                                     @RequestParam("branch") String branch,
+                                     @RequestParam("nip") long nip,
+                                     @RequestParam("regon") long regon,
+                                     @RequestParam("street") String street,
+                                     @RequestParam("postcode") int postcode,
+                                     @RequestParam("city") String city,
+                                     @RequestParam("id") int id) {
+
+        ModelAndView mv = new ModelAndView("redirect:/dealerzy");
+
+        if(company.length() > 128 || branch.length() > 128 || street.length() > 64 || city.length() > 64) {
+
+            //Add error handler
+            return mv;
+
+        }
+
+        Dealer dealer = dealerRepository.findById(id).orElse(new Dealer());
+
+        if(dealer.getCompany() != null) {
+
+            dealer.setCompany(company);
+            dealer.setBranch(branch);
+            dealer.setNip(nip);
+            dealer.setRegon(regon);
+            dealer.setStreet(street);
+            dealer.setPostcode(postcode);
+            dealer.setCity(city);
+
+            dealerRepository.save(dealer);
+
+            return mv;
+
+        } else {
+            //Add error handler
+            return mv;
+        }
     }
 
 }

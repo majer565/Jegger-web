@@ -2,6 +2,7 @@ package com.filipmajewski.jeggerweb.container;
 
 public class NewOrderDetails {
 
+    private final String nr_zlec;
     private final String nr_fakt;
 
     private final double kw_fakt;
@@ -14,9 +15,10 @@ public class NewOrderDetails {
 
     private final double kw_rozl;
 
-    private final String dealer;
+    private final int dealer;
 
-    public NewOrderDetails(String nr_fakt, double kw_fakt, double kw_pocz, int rabat, double kw_rabat, double kw_rozl, String dealer) {
+    public NewOrderDetails(String nr_zlec, String nr_fakt, double kw_fakt, double kw_pocz, int rabat, double kw_rabat, double kw_rozl, int dealer) {
+        this.nr_zlec = nr_zlec;
         this.nr_fakt = nr_fakt;
         this.kw_fakt = kw_fakt;
         this.kw_pocz = kw_pocz;
@@ -26,7 +28,7 @@ public class NewOrderDetails {
         this.dealer = dealer;
     }
 
-    public String getNrfakt() {
+    public String getNr_fakt() {
         return nr_fakt;
     }
 
@@ -50,7 +52,11 @@ public class NewOrderDetails {
         return kw_rozl;
     }
 
-    public String getDealer() {
+    public int getDealer() {
         return dealer;
+    }
+
+    public String getNrzlec() {
+        return nr_zlec;
     }
 }
