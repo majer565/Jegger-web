@@ -32,7 +32,9 @@
 <div class="page_content">
     <div class="orders_header">
         <div class="orders_header_first">
-            <span class="orders_header_first_text">Dealerzy</span>
+            <span class="orders_header_first_text">Dealerzy</span></br>
+            <span class="error_message_span" th:text="${dealerError}"></span>
+            <span class="successful_message_span" th:text="${dealerSuccess}"></span>
         </div>
         <div class="orders_header_second">
             <ul>

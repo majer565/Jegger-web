@@ -4,13 +4,17 @@ import com.filipmajewski.jeggerweb.container.CompleteOrder;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -38,12 +42,19 @@ public class HomeController {
 
     @RequestMapping({"/", "/home"})
     public String homePage() {
-        return "home.html";
+        return "index.html";
     }
 
     @RequestMapping("/login")
     public String loginPage() {
-        return "index.html";
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return "login.html";
+        }
+
+        return "redirect:/home";
     }
 
     @RequestMapping(value = "/rozliczenia", method = RequestMethod.GET)

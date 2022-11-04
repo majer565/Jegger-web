@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>JEGGER</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
     <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
 </head>
 <body>
-    <div class="login_container">
-        <div class="login_logo_image">
-            <img th:src="@{/images/logo_long.jpg}" id="login_logo" alt="JEGGER logo">
+    <nav class="navbar">
+        <div class="nav_logo">
+            <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
         </div>
-        <div class="login_content">
-            <h1>Logowanie</h1>
-            <form action="/home" method="post">
-                <label>
-                    Email:<br>
-                    <input type="text" class="input_text" placeholder="Wpisz email" required="required">
-                </label> <br>
-                <label>
-                    Hasło:<br>
-                    <input type="password" class="input_text" placeholder="Wpisz hasło" required="required">
-                </label> <br>
-                <input type="submit" class="input_submit" value="Zaloguj">
-            </form>
-            <p id="login_invalid_user"></p>
+        <div class="nav_menu">
+            <ul>
+                <li><a th:href="@{/home}">Home</a></li>
+                <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+                <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+                <li><a href="#">Raporty</a></li>
+                <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+            </ul>
         </div>
+        <div class="nav_logout">
+            <a th:href="@{/logout}"><button>Wyloguj</button></a>
+        </div>
+    </nav>
+    <div class="page_content">
+        <img th:src="@{/images/szkic.jpg}" id="home_szkic">
     </div>
+    <footer class="footer">
+        <div class="footer_content">
+            Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+        </div>
+    </footer>
 </body>
 </html>

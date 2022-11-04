@@ -26,13 +26,15 @@
         </ul>
     </div>
     <div class="nav_logout">
-        <button>Wyloguj</button>
+        <a th:href="@{/logout}"><button>Wyloguj</button></a>
     </div>
 </nav>
 <div class="page_content">
     <div class="orders_header">
         <div class="orders_header_first">
             <span class="orders_header_first_text">Wszystkie rozliczenia</span>
+            <span class="error_message_span"></span>
+            <span class="successful_message_span"></span>
         </div>
         <div class="orders_header_second">
             <ul>

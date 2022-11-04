@@ -69,7 +69,8 @@ body{
 .login_container .login_content form .input_submit {
     width: 140px;
     height: 40px;
-    margin-left: 125px;
+    margin: 0 auto;
+    display: block;
     border: none;
     border-radius: 10px;
     background-color: #F1C429;
@@ -89,6 +90,16 @@ body{
     padding: 0;
     text-align: center;
     color: indianred;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.login_container .login_content #login_logout {
+    margin: 10px auto 0 auto;
+    padding: 0;
+    text-align: center;
+    color: #DBAE49;
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
     font-weight: bold;
@@ -184,7 +195,7 @@ body{
 }
 
 .page_content .orders_header .orders_header_first {
-    width: 300px;
+    width: 800px;
     padding: 5px 5px 20px 5px;
     margin: 0 auto;
     text-align: center;
@@ -613,6 +624,24 @@ input::-webkit-inner-spin-button {
 
 .tabShow {
     display: none;
+}
+
+.error_message_span {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: bolder;
+    color: indianred;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+.successful_message_span {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: bolder;
+    color: #42c951;
+    text-align: center;
+    overflow-wrap: break-word;
 }
 
 .footer {

@@ -25,7 +25,7 @@
     </ul>
   </div>
   <div class="nav_logout">
-    <button>Wyloguj</button>
+    <a th:href="@{/logout}"><button>Wyloguj</button></a>
   </div>
 </nav>
 <div class="page_content">
@@ -48,11 +48,11 @@
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Kwota faktury</span>
-          <input type="number" required="required" min="1" th:name="@{kw_fakt}" id="kw_fakt">
+          <input type="number" required="required" min="1" step="0.01" th:name="@{kw_fakt}" id="kw_fakt">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Kwota początkowa</span>
-          <input type="number" required="required" min="1" th:name="@{kw_pocz}" id="kw_pocz">
+          <input type="number" required="required" min="1" step="0.01" th:name="@{kw_pocz}" id="kw_pocz">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Rabat</span>
