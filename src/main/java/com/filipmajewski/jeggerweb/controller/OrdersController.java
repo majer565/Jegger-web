@@ -5,8 +5,10 @@ import com.filipmajewski.jeggerweb.container.NewOrderDetails;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,35 +18,46 @@ import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class OrdersController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+
+    private final DealerRepository dealerRepository;
+
+    private final OrderDealerRepository orderDealerRepository;
+
+    private final OrderHandlowiecRepository orderHandlowiecRepository;
+
+    private final DealerHandlowcyRepository dealerHandlowcyRepository;
+
+    private final UserRepository userRepository;
+
+    private final HistoryRepository historyRepository;
+
+    private final EventRepository eventRepository;
 
     @Autowired
-    private DealerRepository dealerRepository;
-    @Autowired
-    private OrderDealerRepository orderDealerRepository;
+    public OrdersController(OrderRepository orderRepository,
+                            DealerRepository dealerRepository,
+                            OrderDealerRepository orderDealerRepository,
+                            OrderHandlowiecRepository orderHandlowiecRepository,
+                            DealerHandlowcyRepository dealerHandlowcyRepository,
+                            UserRepository userRepository,
+                            HistoryRepository historyRepository,
+                            EventRepository eventRepository) {
 
-    @Autowired
-    private OrderHandlowiecRepository orderHandlowiecRepository;
-
-    @Autowired
-    private DealerHandlowcyRepository dealerHandlowcyRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private HistoryRepository historyRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
+        this.orderRepository = orderRepository;
+        this.dealerRepository = dealerRepository;
+        this.orderDealerRepository = orderDealerRepository;
+        this.orderHandlowiecRepository = orderHandlowiecRepository;
+        this.dealerHandlowcyRepository = dealerHandlowcyRepository;
+        this.userRepository = userRepository;
+        this.historyRepository = historyRepository;
+        this.eventRepository = eventRepository;
+    }
 
     @RequestMapping(value = "/rozliczenia/details", method = RequestMethod.GET)
     public ModelAndView orderDetails(@RequestParam int nr) {
@@ -110,36 +123,61 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/rozliczenie/new/add", method = RequestMethod.POST)
-    public String newOrderPageSecondAdd(@RequestParam("hn_dealer") String hn_dealer,
+    public ModelAndView newOrderPageSecondAdd(@RequestParam("hn_dealer") int hn_dealer,
                                         @RequestParam("kw_dealer") Double kw_dealer,
                                         @RequestParam("kw_handl") Double kw_handl,
                                         @RequestParam("nr_fakt") String nr_fakt,
                                         HttpSession session) {
 
+        ModelAndView mv = new ModelAndView("redirect:/rozliczenia");
+
         NewOrderDetails nod = (NewOrderDetails) session.getAttribute("newOrderDetails");
 
-        try {
+        User user = getAuthenticatedUser();
 
-            Dealer dealer = dealerRepository.findById(nod.getDealer()).orElse(new Dealer());
+        Dealer dealer = dealerRepository.findById(nod.getDealer()).orElse(null);
 
-            Order order = new Order();
+        DealerHandlowcy handlowiec = dealerHandlowcyRepository.findById(hn_dealer).orElse(null);
 
-        } catch (NullPointerException e) {
+        if(dealer == null || user == null || handlowiec == null) {
 
+            mv.addObject("newOrderError", "Błąd przy dodawaniu rozliczenia.");
+            return mv;
         }
 
-        System.out.println(nr_fakt);
-        System.out.println(nod.getKwfakt());
-        System.out.println(nod.getKwpocz());
-        System.out.println(nod.getRabat());
-        System.out.println(nod.getKwrabat());
-        System.out.println(nod.getKwrozl());
-        System.out.println(nod.getDealer());
-        System.out.println(hn_dealer);
-        System.out.println(kw_dealer);
-        System.out.println(kw_handl);
 
-        return "redirect:/rozliczenia/new";
+        Order newOrder = new Order(
+                nod.getNrzlec(),
+                nr_fakt,
+                nod.getKwfakt(),
+                nod.getKwpocz(),
+                nod.getRabat(),
+                nod.getKwrabat(),
+                nod.getKwrozl(),
+                user.getId());
+
+        orderRepository.save(newOrder);
+
+        OrderDealer newOrderDealer = new OrderDealer(
+                newOrder.getDate(),
+                newOrder.getId(),
+                dealer.getCompany(),
+                dealer.getNip(),
+                kw_dealer,
+                "asd");
+
+        OrderHandlowiec newOrderHandlowiec = new OrderHandlowiec(
+                newOrder.getDate(),
+                newOrder.getId(),
+                handlowiec.getHandlowiec(),
+                kw_handl,
+                "asd");
+
+        orderDealerRepository.save(newOrderDealer);
+        orderHandlowiecRepository.save(newOrderHandlowiec);
+        mv.addObject("newOrderSuccess", "Pomyślnie dodano nowe rozliczenie");
+
+        return mv;
     }
 
     @RequestMapping(value = "/rozliczenie/new/send", method = RequestMethod.POST)
@@ -214,5 +252,19 @@ public class OrdersController {
     private String refactorAcceptance(boolean text) {
         if(text) return "TAK";
         else return "NIE";
+    }
+
+    private User getAuthenticatedUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+
+            String currentUserName = authentication.getName();
+
+            return userRepository.findByUsername(currentUserName);
+        }
+
+        return null;
     }
 }

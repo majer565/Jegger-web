@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,26 +20,37 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+
+    private final OrderDealerRepository orderDealerRepository;
+
+    private final OrderHandlowiecRepository orderHandlowiecRepository;
+
+    private final DealerRepository dealerRepository;
+
+    private final UserRepository userRepository;
+
+    private final HistoryRepository historyRepository;
+
+    private final EventRepository eventRepository;
 
     @Autowired
-    private OrderDealerRepository orderDealerRepository;
+    public HomeController(OrderRepository orderRepository,
+                          OrderDealerRepository orderDealerRepository,
+                          OrderHandlowiecRepository orderHandlowiecRepository,
+                          DealerRepository dealerRepository,
+                          UserRepository userRepository,
+                          HistoryRepository historyRepository,
+                          EventRepository eventRepository) {
 
-    @Autowired
-    private OrderHandlowiecRepository orderHandlowiecRepository;
-
-    @Autowired
-    private DealerRepository dealerRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private HistoryRepository historyRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
+        this.orderRepository = orderRepository;
+        this.orderDealerRepository = orderDealerRepository;
+        this.orderHandlowiecRepository = orderHandlowiecRepository;
+        this.dealerRepository = dealerRepository;
+        this.userRepository = userRepository;
+        this.historyRepository = historyRepository;
+        this.eventRepository = eventRepository;
+    }
 
     @RequestMapping({"/", "/home"})
     public String homePage() {
@@ -59,26 +71,32 @@ public class HomeController {
 
     @RequestMapping(value = "/rozliczenia", method = RequestMethod.GET)
     public ModelAndView clearancePage() {
+
         ModelAndView mav = new ModelAndView("orders_all.html");
 
-        List<Order> orderList = orderRepository.findAll();
-
-        List<OrderDealer> orderDealerList = orderDealerRepository.findAll();
-
-        List<OrderHandlowiec> orderHandlowiecList = orderHandlowiecRepository.findAll();
-
-        List<CompleteOrder> completeOrderList = new ArrayList<>();
-
-        for(int i = 0; i < orderList.size(); i++) {
-            Order order = orderList.get(i);
-            OrderDealer orderDealer = orderDealerList.get(i);
-            OrderHandlowiec orderHandlowiec = orderHandlowiecList.get(i);
-            User user = userRepository.findById(order.getUserID()).orElse(new User());
-
-            completeOrderList.add(new CompleteOrder(order, orderDealer, orderHandlowiec, user));
+        User user = getAuthenticatedUser();
+        if(user == null) {
+            System.out.println(new Timestamp(System.currentTimeMillis())
+                                            + "  "
+                                            + "\u001b[31;1m"
+                                            + "ERROR "
+                                            + "\u001B[0m"
+                                            + "Authenticated user is null in request '/rozliczenia'");
+            return mav;
         }
 
-        mav.addObject("completeOrderList", completeOrderList);
+        if(user.getRole().equals("USER")) {
+
+            List<Order> orderList = orderRepository.findAllByUserID(user.getId());
+            List<CompleteOrder> completeOrderList = getUserCompleteOrderList(orderList, user);
+            mav.addObject("completeOrderList", completeOrderList);
+
+        } else if(user.getRole().equals("ADMIN")) {
+
+            List<Order> orderList = orderRepository.findAll();
+            List<CompleteOrder> completeOrderList = getAdminCompleteOrderList(orderList);
+            mav.addObject("completeOrderList", completeOrderList);
+        }
 
         return mav;
     }
@@ -88,22 +106,29 @@ public class HomeController {
 
         ModelAndView mv = new ModelAndView("orders_open.html");
 
-        List<Order> orderList = orderRepository.findAllOpenOrder();
-
-        List<CompleteOrder> completeOrderList = new ArrayList<>();
-
-        for(Order o : orderList) {
-
-            int orderID = o.getId();
-
-            User user = userRepository.findById(o.getUserID()).orElse(new User());
-            completeOrderList.add(new CompleteOrder(o,
-                    orderDealerRepository.findByOrderID(orderID),
-                    orderHandlowiecRepository.findByOrderID(orderID),
-                    user));
+        User user = getAuthenticatedUser();
+        if(user == null) {
+            System.out.println(new Timestamp(System.currentTimeMillis())
+                    + "  "
+                    + "\u001b[31;1m"
+                    + "ERROR "
+                    + "\u001B[0m"
+                    + "Authenticated user is null in request '/rozliczenia/open'");
+            return mv;
         }
 
-        mv.addObject("completeOrderList", completeOrderList);
+        if(user.getRole().equals("USER")) {
+
+            List<Order> orderList = orderRepository.finaAllOpenOrderByUserID(user.getId());
+            List<CompleteOrder> completeOrderList = getUserCompleteOrderList(orderList, user);
+            mv.addObject("completeOrderList", completeOrderList);
+
+        } else if(user.getRole().equals("ADMIN")) {
+
+            List<Order> orderList = orderRepository.findAllOpenOrder();
+            List<CompleteOrder> completeOrderList = getAdminCompleteOrderList(orderList);
+            mv.addObject("completeOrderList", completeOrderList);
+        }
 
         return mv;
     }
@@ -142,6 +167,60 @@ public class HomeController {
     @RequestMapping(value = "/ustawienia", method = RequestMethod.GET)
     public String settingsPage() {
         return "settings.html";
+    }
+
+    private List<CompleteOrder> getUserCompleteOrderList(List<Order> orderList, User user) {
+
+        List<CompleteOrder> completeOrderList = new ArrayList<>();
+
+        for(Order o : orderList) {
+
+            int orderID = o.getId();
+
+            completeOrderList.add(new CompleteOrder(
+                    o,
+                    orderDealerRepository.findByOrderID(orderID),
+                    orderHandlowiecRepository.findByOrderID(orderID),
+                    user
+            ));
+        }
+
+        return completeOrderList;
+    }
+
+    private List<CompleteOrder> getAdminCompleteOrderList(List<Order> orderList) {
+
+        List<CompleteOrder> completeOrderList = new ArrayList<>();
+
+        for(Order o : orderList) {
+
+            int orderID = o.getId();
+
+            User orderUser = userRepository.findById(o.getUserID()).orElse(new User());
+            completeOrderList.add(new CompleteOrder(
+                    o,
+                    orderDealerRepository.findByOrderID(orderID),
+                    orderHandlowiecRepository.findByOrderID(orderID),
+                    orderUser
+            ));
+        }
+
+        return completeOrderList;
+    }
+
+
+    private User getAuthenticatedUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+
+            String currentUserName = authentication.getName();
+
+            return userRepository.findByUsername(currentUserName);
+        }
+
+        return null;
     }
 
 }

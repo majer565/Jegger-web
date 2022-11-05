@@ -18,11 +18,16 @@ import java.util.List;
 @Controller
 public class DealersController {
 
-    @Autowired
-    private DealerRepository dealerRepository;
+    private final DealerRepository dealerRepository;
+
+    private final DealerHandlowcyRepository dealerHandlowcyRepository;
 
     @Autowired
-    private DealerHandlowcyRepository dealerHandlowcyRepository;
+    public DealersController(DealerRepository dealerRepository,
+                             DealerHandlowcyRepository dealerHandlowcyRepository) {
+        this.dealerRepository = dealerRepository;
+        this.dealerHandlowcyRepository = dealerHandlowcyRepository;
+    }
 
     @RequestMapping(value = "/dealerzy/new/add", method = RequestMethod.POST)
     public ModelAndView addDealer(@RequestParam("name") String name,

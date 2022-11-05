@@ -3,6 +3,7 @@ package com.filipmajewski.jeggerweb.container;
 public class NewOrderDetails {
 
     private final String nr_zlec;
+
     private final String nr_fakt;
 
     private final double kw_fakt;

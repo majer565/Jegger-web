@@ -44,7 +44,7 @@
           <select required="required" th:name="@{hn_dealer}">
             <option hidden value>...</option>
             <option th:each="p : ${handlowcy}" th:value="${p.id}" th:text="${p.handlowiec}" />
-            <option value="brak">Brak</option>
+            <option value="-1">Brak</option>
           </select>
         </div>
         <div class="orders_new_input_box">

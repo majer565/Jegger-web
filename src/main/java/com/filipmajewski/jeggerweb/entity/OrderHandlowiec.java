@@ -1,6 +1,5 @@
 package com.filipmajewski.jeggerweb.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -23,12 +22,18 @@ public class OrderHandlowiec {
 
     private String document;
 
-    public int getId() {
-        return id;
+    public OrderHandlowiec() {}
+
+    public OrderHandlowiec(Timestamp date, int orderID, String name, double price, String document) {
+        this.date = date;
+        this.orderID = orderID;
+        this.name = name;
+        this.price = price;
+        this.document = document;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getId() {
+        return id;
     }
 
     public Timestamp getDate() {

@@ -8,13 +8,14 @@ import java.sql.Timestamp;
 public class Order {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private Timestamp date;
+
     @Column(name = "old_order_number")
     private String oldOrderNumber;
 
-    @GeneratedValue
     @Column(name = "order_number")
     private int orderNumber;
 
@@ -51,9 +52,6 @@ public class Order {
     @Column(name = "handlowiec_acceptance_date")
     private Timestamp handlowiecAcceptanceDate;
 
-    @GeneratedValue
-    private int historyID;
-
     public Order() {}
 
     public Order(String oldOrderNumber,
@@ -67,6 +65,7 @@ public class Order {
 
         this.date = new Timestamp(System.currentTimeMillis());
         this.oldOrderNumber = oldOrderNumber;
+        this.orderNumber = id;
         this.invoiceNumber = invoiceNumber;
         this.invoicePrice = invoicePrice;
         this.originalPrice = originalPrice;
@@ -80,10 +79,6 @@ public class Order {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Timestamp getDate() {
@@ -188,14 +183,6 @@ public class Order {
 
     public void setHandlowiecAcceptanceDate(Timestamp handlowiecAcceptanceDate) {
         this.handlowiecAcceptanceDate = handlowiecAcceptanceDate;
-    }
-
-    public int getHistoryID() {
-        return historyID;
-    }
-
-    public void setHistoryID(int historyID) {
-        this.historyID = historyID;
     }
 
     public String getOldOrderNumber() {
