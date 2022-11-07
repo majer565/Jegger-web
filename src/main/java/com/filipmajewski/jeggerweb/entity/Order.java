@@ -16,9 +16,6 @@ public class Order {
     @Column(name = "old_order_number")
     private String oldOrderNumber;
 
-    @Column(name = "order_number")
-    private int orderNumber;
-
     @Column(name = "invoice_number")
     private String invoiceNumber;
 
@@ -65,7 +62,6 @@ public class Order {
 
         this.date = new Timestamp(System.currentTimeMillis());
         this.oldOrderNumber = oldOrderNumber;
-        this.orderNumber = id;
         this.invoiceNumber = invoiceNumber;
         this.invoicePrice = invoicePrice;
         this.originalPrice = originalPrice;
@@ -87,14 +83,6 @@ public class Order {
 
     public void setDate(Timestamp date) {
         this.date = date;
-    }
-
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
     }
 
     public String getInvoiceNumber() {

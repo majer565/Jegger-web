@@ -65,7 +65,7 @@ public class OrdersController {
         ModelAndView mv = new ModelAndView();
 
         try {
-            Order order = orderRepository.findByOrderNumber(nr);
+            Order order = orderRepository.findById(nr).orElse(null);
 
             OrderDealer orderDealer = orderDealerRepository.findByOrderID(order.getId());
 
@@ -198,7 +198,7 @@ public class OrdersController {
         ModelAndView mv = new ModelAndView();
 
         try {
-            Order order = orderRepository.findByOrderNumber(nr);
+            Order order = orderRepository.findById(nr).orElse(null);
 
             OrderDealer orderDealer = orderDealerRepository.findByOrderID(order.getId());
 

@@ -38,7 +38,7 @@
       <form id="addPayoff" th:action="@{/rozliczenia/modify/submit}" method="post">
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Numer zlecenia</span>
-          <input type="text" readonly="readonly" th:name="@{nr_zlec}" th:value="${completeOrder.order.orderNumber}">
+          <input type="text" readonly="readonly" th:name="@{nr_zlec}" th:value="${completeOrder.order.id}">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Numer faktury</span>

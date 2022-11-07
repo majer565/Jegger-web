@@ -10,8 +10,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
-    Order findByOrderNumber(int orderNumber);
-
     @Query("FROM Order o WHERE o.dealerAcceptance=false OR o.handlowiecAcceptance=false")
     List<Order> findAllOpenOrder();
 

@@ -49,9 +49,8 @@
             <table id="orders_table_all_payoffs">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Handlowiec</th>
                     <th>Numer zlecenia</th>
+                    <th>Handlowiec</th>
                     <th>Numer faktury</th>
                     <th>Kwota faktury</th>
                     <th>Nazwa Dealera</th>
@@ -63,13 +62,12 @@
                     <tr th:each="completeOrder: ${completeOrderList}">
                         <td th:text="${completeOrder.order.id}"></td>
                         <td th:text="${completeOrder.user.handlowiec}"></td>
-                        <td th:text="${completeOrder.order.orderNumber}"></td>
                         <td th:text="${completeOrder.order.invoiceNumber}"></td>
                         <td th:text="${completeOrder.order.invoicePrice} + ' PLN'"></td>
                         <td th:text="${completeOrder.orderDealer.name}"></td>
                         <td th:text="${completeOrder.orderHandlowiec.name}"></td>
                         <td>
-                            <a th:href="@{/rozliczenia/details(nr=${completeOrder.order.orderNumber})}"><button type="button" class="orders_table_info_button">INFO</button></a>
+                            <a th:href="@{/rozliczenia/details(nr=${completeOrder.order.id})}"><button type="button" class="orders_table_info_button">INFO</button></a>
                         </td>
                     </tr>
                 </tbody>
