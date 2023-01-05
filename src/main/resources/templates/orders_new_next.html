@@ -56,6 +56,14 @@
           <input type="number" required="required" step="0.01" min="0" th:name="@{kw_handl}">
           <input type="hidden" th:value="${newOrder.nr_fakt}" th:name="@{nr_fakt}">
         </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dokument Dealera</span>
+          <input type="text" required="required" th:name="@{doc_dealer}" >
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dokument Handlowca</span>
+          <input type="text" required="required" th:name="@{doc_handl}" >
+        </div>
         <div class="orders_new_submit_holder">
           <input class="orders_new_submit" type="submit" value="Dodaj rozliczenie" th:formaction="@{/rozliczenie/new/add}">
           <input class="orders_new_submit" type="submit" value="Dodaj i wyślij" th:formaction="@{/rozliczenie/new/send}">

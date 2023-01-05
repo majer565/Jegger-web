@@ -9,4 +9,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
 
     Dealer findByNip(long nip);
 
+    Dealer findByCompany(String company);
+
 }

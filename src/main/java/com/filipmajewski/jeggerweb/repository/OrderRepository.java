@@ -17,4 +17,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("FROM Order o WHERE (o.dealerAcceptance=false OR o.handlowiecAcceptance=false) AND o.userID=?1")
     List<Order> finaAllOpenOrderByUserID(int id);
+
+    Order findByOldOrderNumber(String oldOrderNumber);
+
+    Order findByInvoiceNumber(String invoiceNumber);
 }

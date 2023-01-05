@@ -29,7 +29,8 @@
 <div class="page_content">
   <div class="orders_header">
     <div class="orders_header_first">
-      <span class="orders_header_first_text">Modyfikuj rozliczenie</span>
+      <span class="orders_header_first_text">Modyfikuj rozliczenie</span><br>
+      <span class="error_message_span" th:text="${modifyError}"></span>
     </div>
     <div class="orders_header_second"></div>
   </div>
@@ -38,7 +39,7 @@
       <form id="addPayoff" th:action="@{/rozliczenia/modify/submit}" method="post">
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Numer zlecenia</span>
-          <input type="text" readonly="readonly" th:name="@{nr_zlec}" th:value="${completeOrder.order.id}">
+          <input type="number" readonly="readonly" th:name="@{nr_zlec}" th:value="${completeOrder.order.id}">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Numer faktury</span>
@@ -49,12 +50,12 @@
           <input type="number" required="required" th:name="@{kw_fakt}" min="1" th:value="${completeOrder.order.invoicePrice}">
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Dealer</span>
-          <input type="text" required="required" th:name="@{dealer}" th:value="${completeOrder.orderDealer.name}">
-        </div>
-        <div class="orders_new_input_box">
           <span class="orders_new_input_details">Handlowiec Dealera</span>
-          <input type="text" required="required" th:name="@{handl_dealer}" th:value="${completeOrder.orderHandlowiec.name}">
+          <!--<input type="text" required="required" th:name="@{handl_dealer}" th:value="${completeOrder.orderHandlowiec.name}">-->
+          <select required="required" th:name="@{handl_dealer}">
+            <option th:value="-1">...</option>
+            <option th:each="p : ${dealerHList}" th:value="${p.id}" th:text="${p.handlowiec}"/>
+          </select>
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Kwota początkowa</span>

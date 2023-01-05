@@ -139,9 +139,7 @@ public class HomeController {
         ModelAndView mv = new ModelAndView("orders_new.html");
 
         List<Dealer> dealerList = dealerRepository.findAll();
-
-        dealerList.sort(Comparator.comparing(Dealer::getCompany));
-
+        dealerList.sort(Comparator.comparing(Dealer::getCompany, String.CASE_INSENSITIVE_ORDER));
         mv.addObject("dealerList", dealerList);
 
         return mv;

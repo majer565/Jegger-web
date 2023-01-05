@@ -63,7 +63,7 @@
           </select>
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota po rabacie</span>
+          <span class="orders_new_input_details">Kwota rabatu</span>
           <input type="number" readonly="readonly" value="---" th:name="@{kw_rabat}" id="kw_rabat">
         </div>
         <div class="orders_new_input_box">
@@ -99,9 +99,9 @@
 
     let result = kw_pocz.value * rabat;
 
-    kw_rabat.value = Math.round((result + Number.EPSILON) * 100) / 100;
+    kw_rabat.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
 
-    kw_rozl.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
+    kw_rozl.value = Math.round(((result) + Number.EPSILON) * 100) / 100;
   }
 </script>
 </body>
