@@ -1,8 +1,6 @@
 package com.filipmajewski.jeggerweb.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -10,6 +8,7 @@ import java.sql.Timestamp;
 public class OrderHandlowiec {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private Timestamp date;

@@ -1,9 +1,6 @@
 package com.filipmajewski.jeggerweb.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "dealers_handlowcy")
@@ -11,11 +8,20 @@ public class DealerHandlowcy {
 
     @Id
     @Column(name = "handlowiecID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private int dealerID;
 
     private String handlowiec;
+
+    public DealerHandlowcy() {
+    }
+
+    public DealerHandlowcy(int dealerID, String handlowiec) {
+        this.dealerID = dealerID;
+        this.handlowiec = handlowiec;
+    }
 
     public int getId() {
         return id;

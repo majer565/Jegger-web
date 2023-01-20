@@ -28,6 +28,14 @@ public class OrdersController {
 
     private final OrderRepository orderRepository;
 
+    /**
+     * Order status: <br/>
+     * - 0 - open <br/>
+     * - 1 - accepted <br/>
+     * - 2 - pending
+     */
+    private final OrderStatusRepository orderStatusRepository;
+
     private final DealerRepository dealerRepository;
 
     private final OrderDealerRepository orderDealerRepository;
@@ -44,6 +52,7 @@ public class OrdersController {
 
     @Autowired
     public OrdersController(OrderRepository orderRepository,
+                            OrderStatusRepository orderStatusRepository,
                             DealerRepository dealerRepository,
                             OrderDealerRepository orderDealerRepository,
                             OrderHandlowiecRepository orderHandlowiecRepository,
@@ -53,6 +62,7 @@ public class OrdersController {
                             EventRepository eventRepository) {
 
         this.orderRepository = orderRepository;
+        this.orderStatusRepository = orderStatusRepository;
         this.dealerRepository = dealerRepository;
         this.orderDealerRepository = orderDealerRepository;
         this.orderHandlowiecRepository = orderHandlowiecRepository;
@@ -81,8 +91,10 @@ public class OrdersController {
 
                 User orderUser = userRepository.findById(order.getUserID()).orElse(new User());
 
+                List<History> historyList = historyRepository.findAllByOrderID(order.getId());
 
                 mv.addObject("completeOrder", new CompleteOrder(order, orderDealer, orderHandlowiec, orderUser));
+                mv.addObject("historyList", historyList);
                 mv.addObject("orderSubmitDate", refactorTimestamp(order.getDate()));
                 mv.addObject("orderDealerDate", refactorTimestamp(orderDealer.getDate()));
                 mv.addObject("orderHandlowiecDate", refactorTimestamp(orderHandlowiec.getDate()));
@@ -165,6 +177,7 @@ public class OrdersController {
             return mv;
         } else if(hn_dealer != -1 && kw_dealer+kw_handl != nod.getKwrozl()) {
             rdir.addFlashAttribute("newOrderError", "Błąd przy dodawaniu rozliczenia. Suma kwoty dealera i kwoty handlowca powinna być równa kwocie rozliczenia");
+            return mv;
         }
 
         if(hn_dealer == -1) {
@@ -196,9 +209,11 @@ public class OrdersController {
                     0,
                     "---");
 
+            OrderStatus newOrderStatus = new OrderStatus(newOrder.getId(), 0);
 
             orderDealerRepository.save(newOrderDealer);
             orderHandlowiecRepository.save(newOrderHandlowiec);
+            orderStatusRepository.save(newOrderStatus);
             rdir.addFlashAttribute("newOrderSuccess", "Pomyślnie dodano nowe rozliczenie");
         } else {
 
@@ -235,8 +250,11 @@ public class OrdersController {
                     kw_handl,
                     doc_handl);
 
+            OrderStatus newOrderStatus = new OrderStatus(newOrder.getId(), 0);
+
             orderDealerRepository.save(newOrderDealer);
             orderHandlowiecRepository.save(newOrderHandlowiec);
+            orderStatusRepository.save(newOrderStatus);
             rdir.addFlashAttribute("newOrderSuccess", "Pomyślnie dodano nowe rozliczenie");
         }
 
@@ -244,15 +262,110 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/rozliczenie/new/send", method = RequestMethod.POST)
-    public String newOrderPageSecondSend(@RequestParam("hn_dealer") String hn_dealer,
+    public ModelAndView newOrderPageSecondSend(@RequestParam("hn_dealer") int hn_dealer,
                                          @RequestParam("kw_dealer") Double kw_dealer,
-                                         @RequestParam("kw_handl") Double kw_handl) {
+                                         @RequestParam("kw_handl") Double kw_handl,
+                                         @RequestParam("nr_fakt") String nr_fakt,
+                                         @RequestParam("doc_dealer") String doc_dealer,
+                                         @RequestParam("doc_handl") String doc_handl,
+                                         RedirectAttributes rdir,
+                                         HttpSession session) {
 
-        System.out.println(hn_dealer);
-        System.out.println(kw_dealer);
-        System.out.println(kw_handl);
+        ModelAndView mv = new ModelAndView("redirect:/rozliczenia");
 
-        return "redirect:/rozliczenia/new";
+        NewOrderDetails nod = (NewOrderDetails) session.getAttribute("newOrderDetails");
+
+        User user = getAuthenticatedUser();
+
+        Dealer dealer = dealerRepository.findById(nod.getDealer()).orElse(null);
+
+        if(dealer == null || user == null) {
+            rdir.addFlashAttribute("newOrderError", "Błąd przy dodawaniu rozliczenia.");
+            return mv;
+        } else if(hn_dealer != -1 && kw_dealer+kw_handl != nod.getKwrozl()) {
+            rdir.addFlashAttribute("newOrderError", "Błąd przy dodawaniu rozliczenia. Suma kwoty dealera i kwoty handlowca powinna być równa kwocie rozliczenia");
+            return mv;
+        }
+
+        if(hn_dealer == -1) {
+
+            Order newOrder = new Order(
+                    nod.getNrzlec(),
+                    nr_fakt,
+                    nod.getKwfakt(),
+                    nod.getKwpocz(),
+                    nod.getRabat(),
+                    nod.getKwrabat(),
+                    nod.getKwrozl(),
+                    user.getId());
+
+            orderRepository.save(newOrder);
+
+            OrderDealer newOrderDealer = new OrderDealer(
+                    newOrder.getDate(),
+                    newOrder.getId(),
+                    dealer.getCompany(),
+                    dealer.getNip(),
+                    newOrder.getFinalPrice(),
+                    doc_dealer);
+
+            OrderHandlowiec newOrderHandlowiec = new OrderHandlowiec(
+                    newOrder.getDate(),
+                    newOrder.getId(),
+                    "---",
+                    0,
+                    "---");
+
+            OrderStatus newOrderStatus = new OrderStatus(newOrder.getId(), 2);
+
+            orderDealerRepository.save(newOrderDealer);
+            orderHandlowiecRepository.save(newOrderHandlowiec);
+            orderStatusRepository.save(newOrderStatus);
+            rdir.addFlashAttribute("newOrderSuccess", "Pomyślnie wysłano nowe rozliczenie");
+        } else {
+
+            DealerHandlowcy handlowiec = dealerHandlowcyRepository.findById(hn_dealer).orElse(null);
+            if(handlowiec == null) {
+                rdir.addFlashAttribute("newOrderError", "Błąd przy dodawaniu rozliczenia.");
+                return mv;
+            }
+
+            Order newOrder = new Order(
+                    nod.getNrzlec(),
+                    nr_fakt,
+                    nod.getKwfakt(),
+                    nod.getKwpocz(),
+                    nod.getRabat(),
+                    nod.getKwrabat(),
+                    nod.getKwrozl(),
+                    user.getId());
+
+            orderRepository.save(newOrder);
+
+            OrderDealer newOrderDealer = new OrderDealer(
+                    newOrder.getDate(),
+                    newOrder.getId(),
+                    dealer.getCompany(),
+                    dealer.getNip(),
+                    kw_dealer,
+                    doc_dealer);
+
+            OrderHandlowiec newOrderHandlowiec = new OrderHandlowiec(
+                    newOrder.getDate(),
+                    newOrder.getId(),
+                    handlowiec.getHandlowiec(),
+                    kw_handl,
+                    doc_handl);
+
+            OrderStatus newOrderStatus = new OrderStatus(newOrder.getId(), 2);
+
+            orderDealerRepository.save(newOrderDealer);
+            orderHandlowiecRepository.save(newOrderHandlowiec);
+            orderStatusRepository.save(newOrderStatus);
+            rdir.addFlashAttribute("newOrderSuccess", "Pomyślnie wysłano nowe rozliczenie");
+        }
+
+        return mv;
     }
 
     @RequestMapping(value = "/rozliczenia/modify", method = RequestMethod.GET)
@@ -265,7 +378,9 @@ public class OrdersController {
         try {
             Order order = orderRepository.findById(nr).orElse(null);
 
-            if(user != null && order.getUserID() == user.getId() || user.getRole().equals("ADMIN")) {
+            OrderStatus orderStatus = orderStatusRepository.findByOrderID(order.getId());
+
+            if(user != null && orderStatus.getStatus() == 0 && (order.getUserID() == user.getId() || user.getRole().equals("ADMIN"))) {
 
                 OrderDealer orderDealer = orderDealerRepository.findByOrderID(order.getId());
 
@@ -284,11 +399,12 @@ public class OrdersController {
                 mv.setViewName("orders_modify.html");
 
             } else {
-                rdir.addFlashAttribute("newOrderError", "Błąd. Nie można zmodyfikować rozliczenia.");
+                rdir.addFlashAttribute("openOrderError", "Błąd. Nie można zmodyfikować rozliczenia.");
+                mv.setViewName("redirect:/rozliczenia/open");
             }
         } catch(NullPointerException e) {
+            rdir.addFlashAttribute("openOrderError", "Błąd. Nie można zmodyfikować rozliczenia.");
             mv.setViewName("redirect:/rozliczenia/open");
-            rdir.addFlashAttribute("newOrderError", "Błąd. Nie można zmodyfikować rozliczenia.");
         }
 
         return mv;
@@ -336,13 +452,36 @@ public class OrdersController {
         return mv;
     }
 
+    @RequestMapping(value = "/rozliczenia/open/send", method = RequestMethod.POST)
+    public ModelAndView sendOpenOrder(@RequestParam int nr, RedirectAttributes rdir) {
+
+        ModelAndView mv = new ModelAndView("redirect:/rozliczenia/open");
+
+        try {
+
+            OrderStatus orderStatus = orderStatusRepository.findByOrderID(nr);
+
+            orderStatus.setStatus(2);
+            orderStatusRepository.save(orderStatus);
+
+            //Add emiail sender
+
+            rdir.addFlashAttribute("openOrderSuccess", "Pomyślnie wysłano rozliczenie.");
+            return mv;
+
+        } catch (Exception e) {
+            rdir.addFlashAttribute("openOrderError", "Nie udało się wysłać rozliczenia.");
+            return mv;
+        }
+    }
+
     private String refactorTimestamp(Timestamp timestamp) {
 
         if(timestamp == null) {
             return "---";
         }
 
-        return new SimpleDateFormat("MM/dd/yyyy HH:mm").format(timestamp);
+        return new SimpleDateFormat("dd.MM.yyyy HH:mm").format(timestamp);
     }
 
     private String refactorAcceptance(boolean text) {

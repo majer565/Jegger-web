@@ -2,6 +2,7 @@ package com.filipmajewski.jeggerweb.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "rozliczenie")
@@ -50,6 +51,26 @@ public class Order {
     private Timestamp handlowiecAcceptanceDate;
 
     public Order() {}
+
+    public Order(Timestamp date, String oldOrderNumber, String invoiceNumber, double invoicePrice, double originalPrice, int discount, double discountPrice, double finalPrice, int userID, boolean accept, Date acceptDate) {
+        this.date = date;
+        this.oldOrderNumber = oldOrderNumber;
+        this.invoiceNumber = invoiceNumber;
+        this.invoicePrice = invoicePrice;
+        this.originalPrice = originalPrice;
+        this.discount = discount;
+        this.discountPrice = discountPrice;
+        this.finalPrice = finalPrice;
+        this.userID = userID;
+
+        this.dealerAcceptance = accept;
+        this.handlowiecAcceptance = accept;
+        if(acceptDate != null) {
+            this.dealerAcceptanceDate = new Timestamp(acceptDate.getTime());
+            this.handlowiecAcceptanceDate = new Timestamp(acceptDate.getTime());
+        }
+
+    }
 
     public Order(String oldOrderNumber,
                  String invoiceNumber,

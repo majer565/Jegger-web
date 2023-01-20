@@ -21,7 +21,7 @@
             <li><a th:href="@{/home}">Home</a></li>
             <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
             <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-            <li><a href="#">Raporty</a></li>
+            <li><a th:href="@{/raporty}">Raporty</a></li>
             <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
         </ul>
     </div>
@@ -32,7 +32,9 @@
 <div class="page_content">
     <div class="orders_header">
         <div class="orders_header_first">
-            <span class="orders_header_first_text">Otwarte rozliczenia</span>
+            <span class="orders_header_first_text">Otwarte rozliczenia</span><br>
+            <span class="error_message_span" th:text="${openOrderError}"></span>
+            <span class="successful_message_span" th:text="${openOrderSuccess}"></span>
         </div>
         <div class="orders_header_second">
             <ul>
@@ -70,10 +72,18 @@
                         <a th:href="@{/rozliczenia/details(nr=${completeOrder.order.id})}"><button type="button" class="orders_table_info_button">INFO</button></a>
                     </td>
                     <td>
-                        <a th:href="@{/rozliczenia/modify(nr=${completeOrder.order.id})}"><button class="orders_table_info_button">UPDATE</button></a>
+                        <a th:href="@{/rozliczenia/modify(nr=${completeOrder.order.id})}" th:switch="${completeOrder.orderStatus.status}">
+                            <button class="orders_table_info_button" th:case="0">UPDATE</button>
+                            <button class="orders_table_info_button" th:case="2" disabled>UPDATE</button>
+                        </a>
                     </td>
                     <td>
-                        <a href="#"><button class="orders_table_info_button">SEND</button></a>
+                        <form method="POST" th:action="@{/rozliczenia/open/send(nr=${completeOrder.order.id})}" onsubmit="return confirm('Czy na pewno chcesz wysłać rozliczenie?')">
+                            <a th:switch="${completeOrder.orderStatus.status}">
+                                <button class="orders_table_info_button" th:case="0">SEND</button>
+                                <button class="orders_table_info_button" th:case="2" disabled>SEND</button>
+                            </a>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

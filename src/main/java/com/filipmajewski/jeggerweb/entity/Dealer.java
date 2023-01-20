@@ -30,6 +30,11 @@ public class Dealer {
     public Dealer() {
     }
 
+    public Dealer(Timestamp date, String company) {
+        this.date = date;
+        this.company = company;
+    }
+
     public Dealer(String company, String branch, long nip, long regon, String street, int postcode, String city) {
         this.date = new Timestamp(System.currentTimeMillis());
         this.company = company;

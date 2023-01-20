@@ -17,6 +17,14 @@ public class History {
 
     private String description;
 
+    public History() {}
+
+    public History(int orderID, String description) {
+        this.orderID = orderID;
+        this.description = description;
+        this.date = new Timestamp(System.currentTimeMillis());
+    }
+
     public int getId() {
         return id;
     }

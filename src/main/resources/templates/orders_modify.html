@@ -18,7 +18,7 @@
       <li><a th:href="@{/home}">Home</a></li>
       <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
       <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-      <li><a href="#">Raporty</a></li>
+      <li><a th:href="@{/raporty}">Raporty</a></li>
       <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
     </ul>
   </div>
@@ -69,7 +69,7 @@
           </select>
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota po rabacie</span>
+          <span class="orders_new_input_details">Kwota rabatu</span>
           <input type="number" readonly="readonly" min="1" id="kw_rabat" th:name="@{kw_rabat}">
         </div>
         <div class="orders_new_input_box">

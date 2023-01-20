@@ -83,7 +83,7 @@ public class DealersController {
 
         Dealer dealer = dealerRepository.findById(id).orElse(new Dealer());
 
-        if(dealer.getNip() == 0) {
+        if(dealer.getCompany() == null) {
             mv.setViewName("redirect:/dealerzy");
             redir.addFlashAttribute("dealerError", "Błąd. Nie znaleziono dealera o takim numerze ID.");
         } else {

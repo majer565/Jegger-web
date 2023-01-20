@@ -331,6 +331,68 @@ body{
     height: 30px;
 }
 
+.order_details_admin_comment {
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+#order_details_comments_table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#order_details_comments_table thead {
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+#order_details_comments_table td {
+    vertical-align: middle;
+    text-align: center;
+    height: 25px;
+}
+
+
+#order_details_comments_table tbody tr:hover {
+    font-weight: bold;
+}
+
+.order_details_admin_comment form {
+    width: 450px;
+    height: 80px;
+    margin-top: 30px;
+}
+
+.order_details_admin_comment form .input{
+    width: 75%;
+    margin-left: 15px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid #313131;
+    padding-left: 5px;
+}
+
+.order_details_admin_comment form .input:focus{
+    outline: black 1px solid;
+}
+
+.order_details_admin_comment form .admin_button{
+    width: 150px;
+    margin-top: 30px;
+    margin-left: 50px;
+    padding: 10px;
+    border-radius: 15px;
+    border: 2px solid #D82918;
+    background-color: #F2C52A;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.order_details_admin_comment form .admin_button:active{
+    background-color: #CCA047;
+}
+
 .page_content .orders_details_container .table_left_align {
     text-align: left;
 }
