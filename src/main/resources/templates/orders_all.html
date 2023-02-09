@@ -21,7 +21,7 @@
             <li><a th:href="@{/home}">Home</a></li>
             <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
             <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-            <li><a th:href="@{/raporty}">Raporty</a></li>
+            <li><a th:href="@{/raporty}">Zadania</a></li>
             <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
         </ul>
     </div>
@@ -45,11 +45,21 @@
         </div>
     </div>
     <div class="orders_table_container">
+        <div id="order_search_by">
+            <label for="column-select">Search by: </label><select id="column-select">
+            <option value="0">Numer zlecenia</option>
+            <option value="1">Data</option>
+            <option value="2">Handlowiec</option>
+            <option value="3">Dealer</option>
+            <option value="4">Handlowiec Dealera</option>
+        </select>
+        </div>
         <div class="orders_table_content">
             <table id="orders_table_all_payoffs">
                 <thead>
                 <tr>
                     <th>Numer zlecenia</th>
+                    <th>Data</th>
                     <th>Handlowiec</th>
                     <th>Numer faktury</th>
                     <th>Kwota faktury</th>
@@ -61,6 +71,7 @@
                 <tbody>
                     <tr th:each="completeOrder: ${completeOrderList}">
                         <td th:text="${completeOrder.order.id}"></td>
+                        <td th:text="${completeOrder.order.date}"></td>
                         <td th:text="${completeOrder.user.handlowiec}"></td>
                         <td th:text="${completeOrder.order.invoiceNumber}"></td>
                         <td th:text="${completeOrder.order.invoicePrice} + ' PLN'"></td>
@@ -80,5 +91,25 @@
         Filip Majewski Web Development © Wszystkie prawa zastrzeżone
     </div>
 </footer>
+<script>
+    $(document).ready(function() {
+        let table = $('#orders_table_all_payoffs').DataTable({
+            searching: true,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1]
+            }]
+        });
+
+        let searchInput = $('.dataTables_filter input');
+
+        $(searchInput).on('change', function() {
+            let column = table.column($('#column-select').val());
+            let searchTerm = searchInput.val();
+            table.columns().search('').draw();
+            column.search(searchTerm).draw();
+        });
+    });
+</script>
 </body>
 </html>

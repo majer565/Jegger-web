@@ -1,5 +1,6 @@
 package com.filipmajewski.jeggerweb.controller;
 
+import com.filipmajewski.jeggerweb.container.AcceptedOrderReport;
 import com.filipmajewski.jeggerweb.container.CompleteOrder;
 import com.filipmajewski.jeggerweb.container.OpenOrderReport;
 import com.filipmajewski.jeggerweb.entity.*;
@@ -152,7 +153,7 @@ public class ReportsController {
             order.setDealerAcceptanceDate(date);
             order.setHandlowiecAcceptanceDate(date);
 
-            status.setStatus(1);
+            status.setStatus(3);
             orderStatusRepository.save(status);
             historyRepository.save(history);
             orderRepository.save(order);
@@ -187,6 +188,87 @@ public class ReportsController {
         }
 
         return mv;
+    }
+
+    @RequestMapping("/raporty/rozlicz")
+    public ModelAndView reportsPayment(RedirectAttributes rdir){
+
+        ModelAndView mv = new ModelAndView("reports_payment.html");
+
+        User user = getAuthenticatedUser();
+        String userRole = user.getRole();
+
+        if(userRole.equals("ADMIN") || userRole.equals("ACCOUNTANT")) {
+
+            List<OrderStatus> orderStatusList = orderStatusRepository.findAllByStatus(4);
+
+            if(userRole.equals("ADMIN")) {
+
+
+
+            } else {
+
+            }
+
+            return mv;
+
+        } else {
+            rdir.addFlashAttribute("reportError", "Błąd. Nie masz wystarczających uprawnień.");
+            mv.setViewName("redirect:/raporty");
+            return mv;
+        }
+
+    }
+
+    @RequestMapping("/raporty/rozliczenia")
+    public ModelAndView reportsOrders(){
+
+        ModelAndView mv = new ModelAndView("reports_orders.html");
+
+        User user = getAuthenticatedUser();
+
+        List<OrderStatus> acceptedOrdersStatus = orderStatusRepository.findAllByStatus(3);
+        List<Order> acceptedOrders = new ArrayList<>();
+        List<AcceptedOrderReport> orderList = new ArrayList<>();
+
+        for(OrderStatus o : acceptedOrdersStatus) {
+            acceptedOrders.add(orderRepository.findByIdAndUserID(o.getOrderID(), user.getId()));
+        }
+
+        for(Order o : acceptedOrders) {
+            orderList.add(new AcceptedOrderReport(o.getId(),
+                                                user.getHandlowiec(),
+                                                refactorTimestamp(o.getDealerAcceptanceDate())));
+        }
+
+        mv.addObject("reportList", orderList);
+
+        return mv;
+
+    }
+
+    @RequestMapping("/raporty/platnosc/send")
+    public ModelAndView sendAcceptedOrder(@RequestParam int nr, RedirectAttributes rdir) {
+
+        ModelAndView mv = new ModelAndView("redirect:/raporty/rozliczenia");
+
+        try {
+
+            OrderStatus orderStatus = orderStatusRepository.findByOrderID(nr);
+
+            orderStatus.setStatus(4);
+            orderStatusRepository.save(orderStatus);
+
+            //Add emiail sender
+
+            rdir.addFlashAttribute("reportSuccess", "Pomyślnie wysłano rozliczenie do płatności.");
+            return mv;
+
+        } catch (Exception e) {
+            rdir.addFlashAttribute("reportError", "Nie udało się wysłać rozliczenia do płatności.");
+            return mv;
+        }
+
     }
 
     private User getAuthenticatedUser() {

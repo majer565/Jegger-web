@@ -32,24 +32,28 @@
 <div class="page_content">
     <div class="settings_container">
         <div class="settings_menu">
-            <a class="tab active"><i class="fa-solid fa-user"></i></a>
-            <a id="settings_password" class="tab"><i class="fa fa-light fa-user-pen"></i></a>
+            <a id="settings" class="tab" th:href="@{/ustawienia}"><i class="fa-solid fa-user"></i></a>
+            <a id="settings_password" class="tab active"><i class="fa fa-light fa-user-pen"></i></a>
         </div>
         <div class="settings_content">
-            <div class="settings_content_info tabShow">
-                <h1>Moje konto</h1>
-                <h2>DANE</h2>
-                <input type="text" readonly="readonly" value="Adrian Majewski">
-                <h2>STANOWISKO</h2>
-                <input type="text" readonly="readonly" value="Doradca">
-                <h2>EMAIL</h2>
-                <input type="text" readonly="readonly" value="adrian.majewski1976@gmail.com">
-                <h2>HASŁO</h2>
-                <input type="password" readonly="readonly" value="12345678900987665423">
+            <div class="settings_content_password">
+                <h1>Zmień hasło</h1>
+                <p id="settings_email_sent__success" class="settings_email_sent" th:text="${passwordSuccess}"></p>
+                <p id="settings_email_sent__error" class="settings_email_sent" th:text="${passwordError}"></p>
+                <form th:action="@{/ustawienia/resetPassword/reset}" method="post">
+                    <h2>KOD ZMIANY HASŁA</h2>
+                    <input type="number" placeholder="Wpisz kod" th:name="@{verifyCode}">
+                    <h2>HASŁO</h2>
+                    <input type="password" placeholder="Nowe hasło" th:name="@{newPassword}">
+                    <h2>POWTÓRZ HASŁO</h2>
+                    <input type="password" placeholder="Powtórz hasło" th:name="@{newPasswordRepeat}">
+                    <input type="hidden" th:name="@{processID}" th:value="${resetProcessID}">
+                    <a th:href="@{/ustawienia/resetPassword/sendCode}" class="s-p-a">
+                        <button type="button" class="settings_password_reset">Wyślij kod</button>
+                    </a>
+                    <input type="submit" class="settings_password_update" value="Zapisz">
+                </form>
             </div>
-            <a th:href="@{/ustawienia/resetPassword}">
-                <button type="button" class="settings_password_reset">Zmień hasło</button>
-            </a>
         </div>
     </div>
 </div>

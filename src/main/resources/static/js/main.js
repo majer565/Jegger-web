@@ -1,13 +1,3 @@
-
-$(document).ready(function () {
-    $('#orders_table_all_payoffs').DataTable({
-        'aoColumnDefs': [{
-            'bSortable': false,
-            'aTargets': [-1, -2]
-        }]
-    });
-});
-
 $(document).ready(function () {
     $('#dealers_table').DataTable({
         'aoColumnDefs': [{

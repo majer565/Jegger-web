@@ -19,11 +19,11 @@ public class OrderHandlowiec {
 
     private double price;
 
-    private String document;
+    private int document;
 
     public OrderHandlowiec() {}
 
-    public OrderHandlowiec(Timestamp date, int orderID, String name, double price, String document) {
+    public OrderHandlowiec(Timestamp date, int orderID, String name, double price, int document) {
         this.date = date;
         this.orderID = orderID;
         this.name = name;
@@ -67,11 +67,11 @@ public class OrderHandlowiec {
         this.price = price;
     }
 
-    public String getDocument() {
+    public int getDocument() {
         return document;
     }
 
-    public void setDocument(String document) {
+    public void setDocument(int document) {
         this.document = document;
     }
 

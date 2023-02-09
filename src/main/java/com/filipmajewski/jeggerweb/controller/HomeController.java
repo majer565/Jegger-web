@@ -6,6 +6,7 @@ import com.filipmajewski.jeggerweb.container.Hcon;
 import com.filipmajewski.jeggerweb.container.RozliczenieContainer;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
+import org.apache.coyote.http11.filters.IdentityOutputFilter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,10 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileInputStream;
 import java.sql.Timestamp;
@@ -43,6 +47,8 @@ public class HomeController {
 
     private final EventRepository eventRepository;
 
+    private final PasswordResetRepository passwordResetRepository;
+
     @Autowired
     private DealerHandlowcyRepository dealerHandlowcyRepository;
 
@@ -54,7 +60,8 @@ public class HomeController {
                           DealerRepository dealerRepository,
                           UserRepository userRepository,
                           HistoryRepository historyRepository,
-                          EventRepository eventRepository) {
+                          EventRepository eventRepository,
+                          PasswordResetRepository passwordResetRepository) {
 
         this.orderRepository = orderRepository;
         this.orderStatusRepository = orderStatusRepository;
@@ -64,6 +71,7 @@ public class HomeController {
         this.userRepository = userRepository;
         this.historyRepository = historyRepository;
         this.eventRepository = eventRepository;
+        this.passwordResetRepository = passwordResetRepository;
     }
 
     @RequestMapping("/wgraj")
@@ -131,7 +139,7 @@ public class HomeController {
                 double dealerPrice = cell12.getNumericCellValue();
 
                 Cell cell13 = row.getCell(13);
-                String dealerDocument = cell13.getStringCellValue();
+                int dealerDocument = (int)cell13.getNumericCellValue();
 
                 Cell cell14 = row.getCell(14);
                 String handlowiecName = cell14.getStringCellValue();
@@ -140,7 +148,7 @@ public class HomeController {
                 double handlowiecPrice = cell15.getNumericCellValue();
 
                 Cell cell16 = row.getCell(16);
-                String handlowiecDocument = cell16.getStringCellValue();
+                int handlowiecDocument = (int)cell16.getNumericCellValue();
 
                 rozlList.add(new RozliczenieContainer(
                         oldOrderNumber,
@@ -387,6 +395,71 @@ public class HomeController {
     @RequestMapping(value = "/ustawienia", method = RequestMethod.GET)
     public String settingsPage() {
         return "settings.html";
+    }
+
+    @RequestMapping(value = "/ustawienia/resetPassword", method = RequestMethod.GET)
+    public String resetPassword() {
+        return "settings_pass.html";
+    }
+
+    @RequestMapping(value = "/ustawienia/resetPassword/sendCode")
+    public ModelAndView resetPasswordSendCode(RedirectAttributes rdir) {
+
+        ModelAndView mv = new ModelAndView("redirect:/ustawienia/resetPassword");
+
+        User user = getAuthenticatedUser();
+        int verifyCode = (int)(Math.random()*1000000);
+        Long expirationDate = System.currentTimeMillis() + 300000;
+
+        PasswordReset passwordReset = new PasswordReset(user.getId(), verifyCode, expirationDate);
+        passwordResetRepository.save(passwordReset);
+
+        //Email sender
+        System.out.println(verifyCode + " | " + new Timestamp(expirationDate));
+        rdir.addFlashAttribute("resetProcessID", passwordResetRepository.findByVerifyCode(verifyCode).getId());
+        rdir.addFlashAttribute("passwordSuccess", "Kod został wysłany na adres email");
+
+        return mv;
+    }
+
+    @RequestMapping(value = "/ustawienia/resetPassword/reset", method = RequestMethod.POST)
+    public ModelAndView confirmReset(@RequestParam("newPassword") String newPassword,
+                                     @RequestParam("newPasswordRepeat") String newPasswordRepeat,
+                                     @RequestParam("verifyCode") int verifyCode,
+                                     @RequestParam("processID") int id,
+                                     RedirectAttributes rdir) {
+
+        ModelAndView mv = new ModelAndView("redirect:/ustawienia/resetPassword");
+
+        PasswordReset passwordReset = passwordResetRepository.findById(id).orElse(null);
+
+        if(passwordReset == null) {
+
+            rdir.addFlashAttribute("passwordError", "Wystąpił błąd. Spróbuj ponownie.");
+            return mv;
+
+        } else {
+            User user = getAuthenticatedUser();
+
+            if(newPassword.equals(newPasswordRepeat)) {
+                if(verifyCode == passwordReset.getVerifyCode()) {
+
+                    //DODAC EXPIRING DATE HANDLERA
+
+                    BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder(12);
+                    user.setPassword(bcrypt.encode(newPassword));
+                    userRepository.save(user);
+                    rdir.addFlashAttribute("passwordSuccess", "Pomyślnie zmieniono hasło.");
+                    return mv;
+                } else {
+                    rdir.addFlashAttribute("passwordError", "Błąd. Niepoprawny kod.");
+                    return mv;
+                }
+            } else {
+                rdir.addFlashAttribute("passwordError", "Błąd. Podane hasła różnią się.");
+                return mv;
+            }
+        }
     }
 
     private List<CompleteOrder> getUserCompleteOrderList(List<Order> orderList, User user) {

@@ -20,7 +20,7 @@
       <li><a th:href="@{/home}">Home</a></li>
       <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
       <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-      <li><a th:href="@{/raporty}">Raporty</a></li>
+      <li><a th:href="@{/raporty}">Zadania</a></li>
       <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
     </ul>
   </div>
@@ -51,23 +51,22 @@
           <input type="number" required="required" min="1" step="0.01" th:name="@{kw_fakt}" id="kw_fakt">
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota początkowa</span>
+          <span class="orders_new_input_details">Kwota katalogowa</span>
           <input type="number" required="required" min="1" step="0.01" th:name="@{kw_pocz}" id="kw_pocz">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Rabat</span>
           <select required="required" id="rabat" onchange="val()" th:name="@{rabat}">
             <option hidden value>...</option>
-            <option value="10">10%</option>
-            <option value="12">12%</option>
+            <option th:each="i : ${#numbers.sequence(1, 15)}" th:value="${i}" th:text="${i}"></option>
           </select>
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota rabatu</span>
+          <span class="orders_new_input_details">Różnica</span>
           <input type="number" readonly="readonly" value="---" th:name="@{kw_rabat}" id="kw_rabat">
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <span class="orders_new_input_details">Kwota po rabacie</span>
           <input type="number" readonly="readonly" value="---" th:name="@{kw_rozl}" id="kw_rozl">
         </div>
         <div class="orders_new_input_box">

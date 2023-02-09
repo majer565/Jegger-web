@@ -29,15 +29,19 @@ public class NewOrderDetails {
         this.dealer = dealer;
     }
 
+    public String getNr_zlec() {
+        return nr_zlec;
+    }
+
     public String getNr_fakt() {
         return nr_fakt;
     }
 
-    public double getKwfakt() {
+    public double getKw_fakt() {
         return kw_fakt;
     }
 
-    public double getKwpocz() {
+    public double getKw_pocz() {
         return kw_pocz;
     }
 
@@ -45,19 +49,15 @@ public class NewOrderDetails {
         return rabat;
     }
 
-    public double getKwrabat() {
+    public double getKw_rabat() {
         return kw_rabat;
     }
 
-    public double getKwrozl() {
+    public double getKw_rozl() {
         return kw_rozl;
     }
 
     public int getDealer() {
         return dealer;
-    }
-
-    public String getNrzlec() {
-        return nr_zlec;
     }
 }

@@ -44,11 +44,23 @@ public class Order {
     @Column(name = "dealer_acceptance_date")
     private Timestamp dealerAcceptanceDate;
 
+    @Column(name = "dealer_payment")
+    private boolean dealerPayment;
+
+    @Column(name = "dealer_payment_date")
+    private Timestamp dealerPaymentDate;
+
     @Column(name = "handlowiec_acceptance")
     private boolean handlowiecAcceptance;
 
     @Column(name = "handlowiec_acceptance_date")
     private Timestamp handlowiecAcceptanceDate;
+
+    @Column(name = "handlowiec_payment")
+    private boolean handlowiecPayment;
+
+    @Column(name = "handlowiec_payment_date")
+    private Timestamp handlowiecPaymentDate;
 
     public Order() {}
 
@@ -70,6 +82,10 @@ public class Order {
             this.handlowiecAcceptanceDate = new Timestamp(acceptDate.getTime());
         }
 
+        this.dealerPayment = false;
+        this.dealerPaymentDate = null;
+        this.handlowiecPayment = false;
+        this.handlowiecPaymentDate = null;
     }
 
     public Order(String oldOrderNumber,
@@ -92,6 +108,10 @@ public class Order {
         this.userID = userID;
         this.dealerAcceptance = false;
         this.handlowiecAcceptance = false;
+        this.dealerPayment = false;
+        this.dealerPaymentDate = null;
+        this.handlowiecPayment = false;
+        this.handlowiecPaymentDate = null;
     }
 
     public int getId() {

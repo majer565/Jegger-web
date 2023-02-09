@@ -21,4 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     Order findByOldOrderNumber(String oldOrderNumber);
 
     Order findByInvoiceNumber(String invoiceNumber);
+
+    @Query("FROM Order o WHERE o.id=?1 AND o.userID=?2")
+    Order findByIdAndUserID(int id, int userID);
 }

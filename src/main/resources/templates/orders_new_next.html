@@ -21,7 +21,7 @@
       <li><a th:href="@{/home}">Home</a></li>
       <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
       <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-      <li><a th:href="@{/raporty}">Raporty</a></li>
+      <li><a th:href="@{/raporty}">Zadania</a></li>
       <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
     </ul>
   </div>
@@ -36,41 +36,81 @@
     </div>
     <div class="orders_header_second"></div>
   </div>
-  <div class="orders_new_container">
-    <div class="orders_new_content">
+  <div class="orders_new_next_container">
       <form method="post">
-        <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Handlowiec Dealera</span>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Kwota faktury</span>
+          <input type="number" readonly="readonly" th:value="${newOrder.kw_fakt}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Handlowiec Dealera</span>
           <select required="required" th:name="@{hn_dealer}">
             <option hidden value>...</option>
             <option th:each="p : ${handlowcy}" th:value="${p.id}" th:text="${p.handlowiec}" />
             <option value="-1">Brak</option>
           </select>
         </div>
-        <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota Dealera</span>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Kwota katalogowa</span>
+          <input type="number" readonly="readonly" th:value="${newOrder.kw_pocz}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Kwota Dealera</span>
           <input type="number" required="required" min="0" step="0.01" th:name="@{kw_dealer}" >
         </div>
-        <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota Handlowca</span>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Rabat</span>
+          <input type="text" readonly="readonly" th:value="${newOrder_rabat}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Kwota Handlowca</span>
           <input type="number" required="required" step="0.01" min="0" th:name="@{kw_handl}">
           <input type="hidden" th:value="${newOrder.nr_fakt}" th:name="@{nr_fakt}">
         </div>
-        <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Dokument Dealera</span>
-          <input type="text" required="required" th:name="@{doc_dealer}" >
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Kwota po rabacie</span>
+          <input type="number" readonly="readonly" th:value="${newOrder.kw_rozl}">
         </div>
-        <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Dokument Handlowca</span>
-          <input type="text" required="required" th:name="@{doc_handl}" >
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Płatność Dealera</span>
+          <select required="required" th:name="@{doc_dealer}">
+            <option hidden value>...</option>
+            <option value="1">Faktura</option>
+            <option value="-1">Brak</option>
+          </select>
         </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Dealer</span>
+          <input type="text" readonly="readonly" th:value="${newOrder_dealer}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Płatność Handlowca</span>
+          <select required="required" th:name="@{doc_handl}">
+            <option hidden value>...</option>
+            <option value="1">Faktura</option>
+            <option value="2">Blik</option>
+            <option value="3">Gotówka</option>
+            <option value="4">Umowa</option>
+            <option value="-1">Brak</option>
+          </select>
+        </div>
+
         <div class="orders_new_submit_holder">
           <input class="orders_new_submit" type="submit" value="Dodaj rozliczenie" th:formaction="@{/rozliczenie/new/add}">
           <input class="orders_new_submit" type="submit" value="Dodaj i wyślij" th:formaction="@{/rozliczenie/new/send}">
         </div>
       </form>
       <p id="order_already_in_database"></p>
-    </div>
   </div>
 </div>
 <footer class="footer">

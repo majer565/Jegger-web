@@ -21,7 +21,7 @@
             <li><a th:href="@{/home}">Home</a></li>
             <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
             <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-            <li><a th:href="@{/raporty}">Raporty</a></li>
+            <li><a th:href="@{/raporty}">Zadania</a></li>
             <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
         </ul>
     </div>
@@ -50,6 +50,7 @@
                 <thead>
                 <tr>
                     <th>Numer zlecenia</th>
+                    <th>Data</th>
                     <th>Handlowiec</th>
                     <th>Numer faktury</th>
                     <th>Kwota faktury</th>
@@ -63,6 +64,7 @@
                 <tbody>
                 <tr th:each="completeOrder: ${completeOrderList}">
                     <td th:text="${completeOrder.order.id}"></td>
+                    <td th:text="${completeOrder.order.date}"></td>
                     <td th:text="${completeOrder.user.handlowiec}"></td>
                     <td th:text="${completeOrder.order.invoiceNumber}"></td>
                     <td th:text="${completeOrder.order.invoicePrice} + ' PLN'"></td>

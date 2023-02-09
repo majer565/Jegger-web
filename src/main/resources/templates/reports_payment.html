@@ -32,43 +32,40 @@
 <div class="page_content">
     <div class="orders_header">
         <div class="orders_header_first">
-            <span class="orders_header_first_text">Dealerzy</span><br>
-            <span class="error_message_span" th:text="${dealerError}"></span>
-            <span class="successful_message_span" th:text="${dealerSuccess}"></span>
+            <span class="orders_header_first_text">Raporty</span><br>
+            <span class="error_message_span" th:text="${reportError}"></span>
+            <span class="successful_message_span" th:text="${reportSuccess}"></span>
         </div>
         <div class="orders_header_second">
             <ul>
-                <li><a th:href="@{/dealerzy}">Lista Dealerów</a></li>
-                <li><a th:href="@{/dealerzy/new}">Dodaj Dealera</a></li>
+                <li><a id="reports_orders" th:href="@{/raporty/rozliczenia}">Zaakceptowane rozliczenia</a></li>
+                <li><a id="reports_payment" th:href="@{/raporty/rozlicz}">Rozlicz płatność</a></li>
+                <li><a id="reports_admin" th:href="@{/raporty/admin}">Akceptacja rozliczeń</a></li>
             </ul>
         </div>
     </div>
-    <div class="dealers_table_container">
+    <div class="orders_table_container">
         <div class="orders_table_content">
-            <table id="dealers_table">
+            <table id="orders_table_open_payoffs">
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Dealer</th>
-                        <th>NIP</th>
-                        <th>Miejscowość</th>
-                        <th>Szczegóły</th>
-                        <th>Modyfikuj Dealera</th>
-                    </tr>
+                <tr>
+                    <th>Numer zlecenia</th>
+                    <th>Nazwa odbiorcy</th>
+                    <th>Odbiorca pieniędzy</th>
+                    <th>Kwota do wypłaty</th>
+                    <th>Wyślij do płatności</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="dealer: ${dealerList}">
-                        <td th:text="${dealer.id}"></td>
-                        <td th:text="${dealer.company}"></td>
-                        <td th:text="${dealer.nip}"></td>
-                        <td th:text="${dealer.city}"></td>
-                        <td>
-                            <a th:href="@{/dealerzy/details(id=${dealer.id})}"><button type="button" class="orders_table_info_button">INFO</button></a>
-                        </td>
-                        <td>
-                            <a th:href="@{/dealerzy/modify(id=${dealer.id})}"><button type="button" class="orders_table_info_button">UPDATE</button></a>
-                        </td>
-                    </tr>
+                <tr th:each="report: ${reportList}">
+                    <td th:text="${report.orderNumber}"></td>
+                    <td th:text="${report.username}"></td>
+                    <td th:text="${report.orderDate}"></td>
+                    <td th:text="${report.dealerName}"></td>
+                    <td>
+                        <a th:href="@{/raporty/admin/details(nr=${report.orderNumber})}"><button type="button" class="orders_table_info_button">WYŚLIJ</button></a>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

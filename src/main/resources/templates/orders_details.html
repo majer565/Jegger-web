@@ -21,7 +21,7 @@
             <li><a th:href="@{/home}">Home</a></li>
             <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
             <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
-            <li><a th:href="@{/raporty}">Raporty</a></li>
+            <li><a th:href="@{/raporty}">Zadania</a></li>
             <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
         </ul>
     </div>
@@ -34,7 +34,13 @@
         <div class="orders_header_first">
             <span class="orders_header_first_text">Szczegóły rozliczenia</span>
         </div>
-        <div class="orders_header_second"></div>
+        <div class="orders_header_second">
+            <ul>
+                <li><a id="orders_showAllPayoffs" th:href="@{/rozliczenia}">Wszystkie rozliczenia</a></li>
+                <li><a id="orders_showOpenPayoffs" th:href="@{/rozliczenia/open}">Otwarte rozliczenia</a></li>
+                <li><a id="orders_newPayoff" th:href="@{/rozliczenia/new}">Nowe rozliczenie</a></li>
+            </ul>
+        </div>
     </div>
     <div class="orders_details_container">
         <div class="orders_details_left">
@@ -59,11 +65,7 @@
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoiceNumber}"></form></td>
                 </tr>
                 <tr class="orders_table_divider">
-                    <td class="table_left_align">Kwota faktury</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoicePrice} + ' PLN'"></form></td>
-                </tr>
-                <tr>
-                    <td class="table_left_align">Kwota początkowa</td>
+                    <td class="table_left_align">Kwota katalogowa</td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.originalPrice} + ' PLN'"></form></td>
                 </tr>
                 <tr>
@@ -71,12 +73,16 @@
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discount} + '%'"></form></td>
                 </tr>
                 <tr>
-                    <td class="table_left_align">Kwota rabatu</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discountPrice} + ' PLN'"></form></td>
+                    <td class="table_left_align">Kwota po rabacie</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.finalPrice} + ' PLN'"></form></td>
                 </tr>
                 <tr>
-                    <td class="table_left_align">Kwota rozliczenia</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.finalPrice} + ' PLN'"></form></td>
+                    <td class="table_left_align">Kwota faktury</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoicePrice} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Różnica</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discountPrice} + ' PLN'"></form></td>
                 </tr>
                 </tbody>
             </table>
@@ -101,11 +107,6 @@
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.name}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.name}"></form></td>
                 </tr>
-                <tr>
-                    <td class="table_left_align">Dokument</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.document}"></form></td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.document}"></form></td>
-                </tr>
                 <tr class="orders_table_divider">
                     <td class="table_left_align">Data rozliczenia</td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerDate}"></form></td>
@@ -116,10 +117,25 @@
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptance}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptance}"></form></td>
                 </tr>
-                <tr>
+                <tr class="orders_table_divider">
                     <td class="table_left_align">Data akceptacji</td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptanceDate}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptanceDate}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Rodzaj płatności</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPaymentType}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPaymentType}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Płatność</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPayment}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPayment}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Data płatności</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPaymentDate}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPaymentDate}"></form></td>
                 </tr>
                 </tbody>
             </table>

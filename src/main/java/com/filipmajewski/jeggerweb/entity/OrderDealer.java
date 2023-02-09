@@ -21,11 +21,11 @@ public class OrderDealer {
 
     private double price;
 
-    private String document;
+    private int document;
 
     public OrderDealer() {}
 
-    public OrderDealer(Timestamp date, int orderID, String name, long nip, double price, String document) {
+    public OrderDealer(Timestamp date, int orderID, String name, long nip, double price, int document) {
         this.date = date;
         this.orderID = orderID;
         this.name = name;
@@ -78,11 +78,11 @@ public class OrderDealer {
         this.price = price;
     }
 
-    public String getDocument() {
+    public int getDocument() {
         return document;
     }
 
-    public void setDocument(String document) {
+    public void setDocument(int document) {
         this.document = document;
     }
 

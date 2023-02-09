@@ -20,15 +20,15 @@ public class RozliczenieContainer {
 
     private String dealerName;
     private double dealerPrice;
-    private String dealerDocument;
+    private int dealerDocument;
 
     private String handlowiecName;
     private double handlowiecPrice;
-    private String handlowiecDocument;
+    private int handlowiecDocument;
 
     public RozliczenieContainer() {}
 
-    public RozliczenieContainer(String oldOrderNumber, Timestamp date, String invoiceNumber, double invoicePrice, double originalPrice, double discount, double discountPrice, double finalPrice, int userID, int accept, Date acceptanceDate, String dealerName, double dealerPrice, String dealerDocument, String handlowiecName, double handlowiecPrice, String handlowiecDocument) {
+    public RozliczenieContainer(String oldOrderNumber, Timestamp date, String invoiceNumber, double invoicePrice, double originalPrice, double discount, double discountPrice, double finalPrice, int userID, int accept, Date acceptanceDate, String dealerName, double dealerPrice, int dealerDocument, String handlowiecName, double handlowiecPrice, int handlowiecDocument) {
         this.oldOrderNumber = oldOrderNumber;
         this.date = date;
         this.invoiceNumber = invoiceNumber;
@@ -100,7 +100,7 @@ public class RozliczenieContainer {
         return dealerPrice;
     }
 
-    public String getDealerDocument() {
+    public int getDealerDocument() {
         return dealerDocument;
     }
 
@@ -112,7 +112,7 @@ public class RozliczenieContainer {
         return handlowiecPrice;
     }
 
-    public String getHandlowiecDocument() {
+    public int getHandlowiecDocument() {
         return handlowiecDocument;
     }
 
@@ -168,7 +168,7 @@ public class RozliczenieContainer {
         this.dealerPrice = dealerPrice;
     }
 
-    public void setDealerDocument(String dealerDocument) {
+    public void setDealerDocument(int dealerDocument) {
         this.dealerDocument = dealerDocument;
     }
 
@@ -180,7 +180,7 @@ public class RozliczenieContainer {
         this.handlowiecPrice = handlowiecPrice;
     }
 
-    public void setHandlowiecDocument(String handlowiecDocument) {
+    public void setHandlowiecDocument(int handlowiecDocument) {
         this.handlowiecDocument = handlowiecDocument;
     }
 }
