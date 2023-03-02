@@ -255,7 +255,7 @@ body{
 
 .page_content .orders_table_container {
     width: 1300px;
-    margin: 60px auto 0 auto;
+    margin: 50px auto 0 auto;
     font-family: 'Open Sans', sans-serif;
 }
 
@@ -282,6 +282,44 @@ body{
 }
 
 .page_content .orders_table_content table td{
+    text-align: center;
+    height: 30px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.page_content .feed_table_content {
+    display: flex;
+    justify-content: center;
+}
+
+.page_content .feed_table_content table{
+    width: 50%;
+    height: 30px;
+    border-collapse: collapse;
+}
+
+.page_content .feed_table_content table thead{
+    border-bottom: 1px solid gray;
+}
+
+.page_content .feed_table_content table th{
+    height: 40px;
+    font-size: 14px;
+    text-align: center;
+    width: 50%;
+}
+
+.page_content .feed_table_content table tr{
+    font-size: 14px;
+}
+
+.page_content .feed_table_content table tr:nth-child(even){
+    background-color: #E8E8E8;
+}
+
+.page_content .feed_table_content table td{
     text-align: center;
     height: 30px;
     max-width: 120px;
@@ -321,7 +359,7 @@ body{
 
 .page_content .orders_details_container {
     width: 1100px;
-    margin: 60px auto 0 auto;
+    margin: 30px auto 0 auto;
     font-family: 'Open Sans', sans-serif;
     display: flex;
     justify-content: space-around;
@@ -345,13 +383,17 @@ body{
 }
 
 .order_details_admin_comment {
-    border-top: 1px solid #ddd;
-    margin-top: 10px;
+    font-family: "Open Sans", sans-serif;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
 }
 
 #order_details_comments_table {
     border-collapse: collapse;
-    width: 100%;
+    width: 65%;
+    font-size: 16px;
 }
 
 #order_details_comments_table thead {
@@ -359,10 +401,14 @@ body{
     font-weight: bold;
 }
 
+#order_details_comments_table thead tr{
+    width: 100%;
+}
+
 #order_details_comments_table td {
     vertical-align: middle;
     text-align: center;
-    height: 25px;
+    height: 35px;
 }
 
 
@@ -371,9 +417,10 @@ body{
 }
 
 .order_details_admin_comment form {
+    border-top: 1px solid #ddd;
     width: 450px;
     height: 80px;
-    margin-top: 30px;
+    padding-top: 30px;
 }
 
 .order_details_admin_comment form .input{
@@ -391,7 +438,7 @@ body{
 
 .order_details_admin_comment form .admin_button{
     width: 150px;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-left: 50px;
     padding: 10px;
     border-radius: 15px;
@@ -519,6 +566,20 @@ input::-webkit-inner-spin-button {
     letter-spacing: 1px;
 }
 
+.orders_new_submit_disabled {
+    margin-top: 20px;
+    padding: 10px 0;
+    width: 200px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: rgba(150, 150, 150, 0.8);
+    border: 2px solid rgba(120, 120, 120, 0.8);
+    border-radius: 10px;
+    color: black;
+    letter-spacing: 1px;
+}
+
 .page_content .orders_details_container .orders_table_divider{
     border-bottom: 1px solid #ddd;
 }
@@ -617,7 +678,7 @@ input::-webkit-inner-spin-button {
 .page_content .orders_new_content form .orders_modify_submit{
     margin-top: 20px;
     padding: 10px 0;
-    width: 250px;
+    width: 220px;
     height: 50px;
     font-size: 16px;
     font-weight: 600;
@@ -810,6 +871,10 @@ input::-webkit-inner-spin-button {
 
 .s-p-a {
     text-decoration: none;
+}
+
+.payment__h2 {
+    padding-left: 4rem;
 }
 
 .error_message_span {

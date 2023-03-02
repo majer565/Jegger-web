@@ -13,4 +13,7 @@ public interface OrderStatusRepository extends JpaRepository<OrderStatus, Intege
     @Query("FROM OrderStatus o WHERE o.status=?1")
     List<OrderStatus> findAllByStatus(int status);
 
+    @Query("FROM OrderStatus o WHERE o.status=?1 OR o.status=?2")
+    List<OrderStatus> findAllByStatus(int status1, int status2);
+
 }

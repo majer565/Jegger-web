@@ -9,7 +9,6 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
-  <script th:src="@{js/main.js}"></script>
 </head>
 <body>
 <nav class="navbar">
@@ -33,6 +32,7 @@
   <div class="orders_header">
     <div class="orders_header_first">
       <span class="orders_header_first_text">Nowe rozliczenie</span>
+      <span class="error_message_span" th:text="${newOrderError}"></span>
     </div>
     <div class="orders_header_second"></div>
   </div>
@@ -40,17 +40,27 @@
       <form method="post">
 
         <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Numer faktury</span>
+          <input type="text" required="required" th:value="${newOrder.nr_fakt}" th:name="@{nr_fakt}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Handlowiec Dealera</span>
+          <select required="required" th:name="@{hn_dealer}" onchange="blockHandlPrice()" id="handl_select">
+            <option hidden value>...</option>
+            <option th:each="p : ${handlowcy}" th:value="${p.id}" th:text="${p.handlowiec}" />
+            <option value="-1">Brak</option>
+          </select>
+        </div>
+
+        <div class="orders_new_next_input_box">
           <span class="orders_new_next_input_details">Kwota faktury</span>
           <input type="number" readonly="readonly" th:value="${newOrder.kw_fakt}">
         </div>
 
         <div class="orders_new_next_input_box">
-          <span class="orders_new_next_input_details">Handlowiec Dealera</span>
-          <select required="required" th:name="@{hn_dealer}">
-            <option hidden value>...</option>
-            <option th:each="p : ${handlowcy}" th:value="${p.id}" th:text="${p.handlowiec}" />
-            <option value="-1">Brak</option>
-          </select>
+          <span class="orders_new_next_input_details">Kwota Dealera</span>
+          <input type="number" required="required" min="0" step="1" th:name="@{kw_dealer}" id="kw_dealer">
         </div>
 
         <div class="orders_new_next_input_box">
@@ -59,8 +69,8 @@
         </div>
 
         <div class="orders_new_next_input_box">
-          <span class="orders_new_next_input_details">Kwota Dealera</span>
-          <input type="number" required="required" min="0" step="0.01" th:name="@{kw_dealer}" >
+          <span class="orders_new_next_input_details">Kwota Handlowca</span>
+          <input type="number" required="required" step="1" min="0" th:name="@{kw_handl}" id="kw_handl">
         </div>
 
         <div class="orders_new_next_input_box">
@@ -69,21 +79,37 @@
         </div>
 
         <div class="orders_new_next_input_box">
-          <span class="orders_new_next_input_details">Kwota Handlowca</span>
-          <input type="number" required="required" step="0.01" min="0" th:name="@{kw_handl}">
-          <input type="hidden" th:value="${newOrder.nr_fakt}" th:name="@{nr_fakt}">
+          <span class="orders_new_next_input_details">Płatność dealer</span>
+          <select required="required" th:name="@{doc_dealer}" id="dealer_payment" onchange="blockDealerDoc()">
+            <option hidden value>...</option>
+            <option value="1">Faktura</option>
+            <option value="-1">Brak</option>
+          </select>
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Różnica</span>
+          <input type="number" readonly="readonly" th:value="${newOrder.kw_rabat}">
+        </div>
+
+        <div class="orders_new_next_input_box">
+          <span class="orders_new_next_input_details">Dokument dealer</span>
+          <input type="text" th:name="@{pay_dealer_doc}" id="dealer_pay_doc">
         </div>
 
         <div class="orders_new_next_input_box">
           <span class="orders_new_next_input_details">Kwota po rabacie</span>
-          <input type="number" readonly="readonly" th:value="${newOrder.kw_rozl}">
+          <input type="number" readonly="readonly" th:value="${newOrder.kw_rozl}" id="final_price">
         </div>
 
         <div class="orders_new_next_input_box">
-          <span class="orders_new_next_input_details">Płatność Dealera</span>
-          <select required="required" th:name="@{doc_dealer}">
+          <span class="orders_new_next_input_details">Płatność handlowiec</span>
+          <select required="required" th:name="@{doc_handl}" id="handl_payment" onchange="blockHandlDoc()">
             <option hidden value>...</option>
             <option value="1">Faktura</option>
+            <option value="2">Blik</option>
+            <option value="3">Gotówka</option>
+            <option value="4">Umowa</option>
             <option value="-1">Brak</option>
           </select>
         </div>
@@ -94,20 +120,13 @@
         </div>
 
         <div class="orders_new_next_input_box">
-          <span class="orders_new_next_input_details">Płatność Handlowca</span>
-          <select required="required" th:name="@{doc_handl}">
-            <option hidden value>...</option>
-            <option value="1">Faktura</option>
-            <option value="2">Blik</option>
-            <option value="3">Gotówka</option>
-            <option value="4">Umowa</option>
-            <option value="-1">Brak</option>
-          </select>
+          <span class="orders_new_next_input_details">Dokument płatności</span>
+          <input type="text" th:name="@{pay_handl_doc}" id="handl_pay_doc">
         </div>
 
         <div class="orders_new_submit_holder">
-          <input class="orders_new_submit" type="submit" value="Dodaj rozliczenie" th:formaction="@{/rozliczenie/new/add}">
-          <input class="orders_new_submit" type="submit" value="Dodaj i wyślij" th:formaction="@{/rozliczenie/new/send}">
+          <input class="orders_new_submit" id="addButton" type="submit" value="Dodaj rozliczenie" th:formaction="@{/rozliczenie/new/add}">
+          <input class="orders_new_submit" id="sendButton" type="submit" value="Dodaj i wyślij" th:formaction="@{/rozliczenie/new/send}">
         </div>
       </form>
       <p id="order_already_in_database"></p>
@@ -118,5 +137,97 @@
     Filip Majewski Web Development © Wszystkie prawa zastrzeżone
   </div>
 </footer>
+<script>
+
+  const dealerPrice = document.getElementById("kw_dealer");
+  const handlPrice = document.getElementById("kw_handl");
+  const price = document.getElementById("final_price");
+  const addBtn = document.getElementById("addButton");
+  const sendBtn = document.getElementById("sendButton");
+
+  addBtn.disabled = true;
+  addBtn.className = 'orders_new_submit_disabled';
+  sendBtn.disabled = true;
+  sendBtn.className = 'orders_new_submit_disabled';
+
+  dealerPrice.addEventListener('input', checkSum);
+  handlPrice.addEventListener('input', checkSum);
+
+  function checkSum() {
+    const sum = parseInt(dealerPrice.value) + parseInt(handlPrice.value);
+
+    if(sum === parseInt(price.value)) {
+      addBtn.disabled = false;
+      addBtn.className = 'orders_new_submit';
+      sendBtn.disabled = false;
+      sendBtn.className = 'orders_new_submit';
+    } else {
+      addBtn.disabled = true;
+      addBtn.className = 'orders_new_submit_disabled';
+      sendBtn.disabled = true;
+      sendBtn.className = 'orders_new_submit_disabled';
+    }
+  }
+
+  function blockDealerDoc() {
+    const dealerPayment = document.getElementById("dealer_payment");
+    const dealerDoc = document.getElementById("dealer_pay_doc");
+
+    if(dealerPayment.value === "-1") {
+      dealerDoc.disabled = true;
+      dealerDoc.value = "Brak";
+    } else {
+      dealerDoc.disabled = false;
+      dealerDoc.value = "";
+    }
+  }
+
+  function blockHandlDoc() {
+    const handlPayment = document.getElementById("handl_payment");
+    const handlDoc = document.getElementById("handl_pay_doc");
+
+    if(handlPayment.value === "-1") {
+      handlDoc.disabled = true;
+      handlDoc.value = "Brak";
+    } else {
+      handlDoc.disabled = false;
+      handlDoc.value = "";
+    }
+  }
+
+  function blockHandlPrice() {
+    const handlOption = document.getElementById("handl_select");
+    const handlPrice = document.getElementById("kw_handl");
+    const handlPayment = document.getElementById("handl_payment");
+    const handlDoc = document.getElementById("handl_pay_doc");
+    const dealerPrice = document.getElementById("kw_dealer");
+    const finalPrice = document.getElementById("final_price");
+
+    if(handlOption.value === "-1") {
+      handlPrice.disabled = true;
+      handlPrice.value = 0.0;
+
+      handlDoc.disabled = true;
+      handlPayment.value = "-1";
+      handlDoc.value = "Brak";
+
+      dealerPrice.value = +finalPrice.value;
+
+      checkSum();
+    } else {
+      handlPrice.disabled = false;
+      handlPrice.value = "";
+
+      handlDoc.disabled = false;
+      handlPayment.value = "";
+      handlDoc.value = "";
+
+      dealerPrice.value = "";
+
+      checkSum();
+    }
+  }
+
+</script>
 </body>
 </html>

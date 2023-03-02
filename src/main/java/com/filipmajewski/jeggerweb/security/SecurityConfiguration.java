@@ -1,6 +1,8 @@
 package com.filipmajewski.jeggerweb.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.filipmajewski.jeggerweb.repository.SessionRepository;
+import com.filipmajewski.jeggerweb.session.LoginSuccessListener;
+import com.filipmajewski.jeggerweb.session.LogoutSuccessListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -11,14 +13,27 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Autowired
     private UserDetailsService userDetailsService;
+
+    private LogoutSuccessListener logoutSuccessListener;
+
+    private SessionRepository sessionRepository;
+
+    public SecurityConfiguration(UserDetailsService userDetailsService, LogoutSuccessListener logoutSuccessListener, SessionRepository sessionRepository) {
+        this.userDetailsService = userDetailsService;
+        this.logoutSuccessListener = logoutSuccessListener;
+        this.sessionRepository = sessionRepository;
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler() {return new LoginSuccessListener();}
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -44,12 +59,13 @@ public class SecurityConfiguration {
                 })
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successForwardUrl("/home")
+                        .successHandler(loginSuccessHandler())
                         .permitAll())
                 .logout(logout -> logout
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .addLogoutHandler(logoutSuccessListener)
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );

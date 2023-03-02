@@ -38,6 +38,7 @@
         </div>
         <div class="orders_header_second">
             <ul>
+                <li><a id="reports" th:href="@{/raporty}">Aktualności</a></li>
                 <li><a id="reports_orders" th:href="@{/raporty/rozliczenia}">Zaakceptowane rozliczenia</a></li>
                 <li><a id="reports_payment" th:href="@{/raporty/rozlicz}">Rozlicz płatność</a></li>
                 <li><a id="reports_admin" th:href="@{/raporty/admin}">Akceptacja rozliczeń</a></li>
@@ -50,20 +51,18 @@
                 <thead>
                 <tr>
                     <th>Numer zlecenia</th>
-                    <th>Nazwa odbiorcy</th>
                     <th>Odbiorca pieniędzy</th>
                     <th>Kwota do wypłaty</th>
-                    <th>Wyślij do płatności</th>
+                    <th>Zatwierdź płatność</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="report: ${reportList}">
-                    <td th:text="${report.orderNumber}"></td>
-                    <td th:text="${report.username}"></td>
-                    <td th:text="${report.orderDate}"></td>
-                    <td th:text="${report.dealerName}"></td>
+                    <td th:text="${report.orderID}"></td>
+                    <td th:text="${report.receiver}"></td>
+                    <td th:text="${report.paymentAmount}"></td>
                     <td>
-                        <a th:href="@{/raporty/admin/details(nr=${report.orderNumber})}"><button type="button" class="orders_table_info_button">WYŚLIJ</button></a>
+                        <a th:href="@{/raporty/platnosc/admin(id=${report.orderID}, person=${report.person})}"><button type="button" class="orders_table_info_button">ZATWIERDŹ</button></a>
                     </td>
                 </tr>
                 </tbody>

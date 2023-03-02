@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>JEGGER</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+  <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css}" type="text/css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav_logo">
+    <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+  </div>
+  <div class="nav_menu">
+    <ul>
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+      <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+      <li><a th:href="@{/raporty}">Zadania</a></li>
+      <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+    </ul>
+  </div>
+  <div class="nav_logout">
+    <a th:href="@{/logout}"><button>Wyloguj</button></a>
+  </div>
+</nav>
+<div class="page_content">
+  <div class="orders_header">
+    <div class="orders_header_first">
+      <span class="orders_header_first_text">Modyfikuj rozliczenie</span><br>
+      <span class="error_message_span" th:text="${modifyError}"></span>
+    </div>
+    <div class="orders_header_second"></div>
+  </div>
+  <div class="orders_new_container">
+    <div class="orders_new_content">
+      <form id="addPayoff" th:action="@{/raporty/modify/modify(nr=${orderID})}" method="post">
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Całkowita kwota</span>
+          <input type="text" disabled="disabled" id="finalPrice" th:value="${kw_rozl}">
+        </div>
+        <h2 class="payment__h2">Dealer</h2>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Rodzaj płatności</span>
+          <select required="required" th:name="@{dealerPayment}">
+            <option value="1" th:selected="${dealerPayment == 1}">Faktura</option>
+            <option value="-1" th:selected="${dealerPayment == -1}">Brak</option>
+          </select>
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dokument płatności</span>
+          <input type="text" th:name="@{dealerDocument}" th:value="${dealerDocument}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <input type="number" min="0" step="1" id="rozl_dealer" th:name="@{dealerPaymentAmount}" th:value="${dealerPaymentAmount}">
+        </div>
+        <h2 class="payment__h2">Handlowiec Dealera</h2>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Rodzaj płatności</span>
+          <select required="required" th:name="@{handlowiecPayment}">
+            <option value="1" th:selected="${handlowiecPayment == 1}">Faktura</option>
+            <option value="2" th:selected="${handlowiecPayment == 2}">Blik</option>
+            <option value="3" th:selected="${handlowiecPayment == 3}">Gotówka</option>
+            <option value="4" th:selected="${handlowiecPayment == 4}">Umowa</option>
+            <option value="-1" th:selected="${handlowiecPayment == -1}">Brak</option>
+          </select>
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dokument płatności</span>
+          <input type="text" th:name="@{handlowiecDocument}" th:value="${handlowiecDocument}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <input type="number" min="0" step="1" id="rozl_handl" th:name="@{handlowiecPaymentAmount}" th:value="${handlowiecPaymentAmount}">
+        </div>
+        <div class="orders_new_submit_holder">
+          <input class="orders_modify_submit" type="submit" value="Modyfikuj rozliczenie" id="modifyBtn">
+        </div>
+      </form>
+      <p id="order_already_in_database"></p>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="footer_content">
+    Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+  </div>
+</footer>
+<script>
+  const rozl_dealer = document.getElementById("rozl_dealer");
+  const rozl_handl = document.getElementById("rozl_handl");
+  const finalPrice = document.getElementById("finalPrice")
+  const modifyBtn = document.getElementById("modifyBtn");
+
+  rozl_dealer.addEventListener('input', checkSum);
+  rozl_handl.addEventListener('input', checkSum);
+
+  function checkSum() {
+    const sum = parseInt(rozl_dealer.value) + parseInt(rozl_handl.value);
+
+    if(sum === parseInt(finalPrice.value)) {
+      modifyBtn.disabled = false;
+      modifyBtn.className = 'orders_new_submit';
+    } else {
+      modifyBtn.disabled = true;
+      modifyBtn.className = 'orders_new_submit_disabled';
+    }
+  }
+
+  $(document).ready(function () {
+    const sum = parseInt(rozl_dealer.value) + parseInt(rozl_handl.value)
+    if(sum !== parseInt(finalPrice.value)) {
+      addBtn.disabled = true;
+      addBtn.className = 'orders_new_submit_disabled';
+    }
+  });
+
+
+</script>
+</body>
+</html>

@@ -59,11 +59,7 @@
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoiceNumber}"></form></td>
                 </tr>
                 <tr class="orders_table_divider">
-                    <td class="table_left_align">Kwota faktury</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoicePrice} + ' PLN'"></form></td>
-                </tr>
-                <tr>
-                    <td class="table_left_align">Kwota początkowa</td>
+                    <td class="table_left_align">Kwota katalogowa</td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.originalPrice} + ' PLN'"></form></td>
                 </tr>
                 <tr>
@@ -72,11 +68,15 @@
                 </tr>
                 <tr>
                     <td class="table_left_align">Kwota po rabacie</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discountPrice} + ' PLN'"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.finalPrice} + ' PLN'"></form></td>
                 </tr>
                 <tr>
-                    <td class="table_left_align">Kwota rozliczenia</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.finalPrice} + ' PLN'"></form></td>
+                    <td class="table_left_align">Kwota faktury</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.invoicePrice} + ' PLN'"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Różnica</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.order.discountPrice} + ' PLN'"></form></td>
                 </tr>
                 </tbody>
             </table>
@@ -101,11 +101,6 @@
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.name}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.name}"></form></td>
                 </tr>
-                <tr>
-                    <td class="table_left_align">Dokument</td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderDealer.document}"></form></td>
-                    <td><form><input type="text" readonly="readonly" th:value="${completeOrder.orderHandlowiec.document}"></form></td>
-                </tr>
                 <tr class="orders_table_divider">
                     <td class="table_left_align">Data rozliczenia</td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerDate}"></form></td>
@@ -116,23 +111,43 @@
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptance}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptance}"></form></td>
                 </tr>
-                <tr>
+                <tr class="orders_table_divider">
                     <td class="table_left_align">Data akceptacji</td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderDealerAcceptanceDate}"></form></td>
                     <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecAcceptanceDate}"></form></td>
                 </tr>
+                <tr>
+                    <td class="table_left_align">Rodzaj płatności</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPaymentType}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPaymentType}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Dokument</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPaymentDocument}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPaymentDocument}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Płatność</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPayment}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPayment}"></form></td>
+                </tr>
+                <tr>
+                    <td class="table_left_align">Data płatności</td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderDealerPaymentDate}"></form></td>
+                    <td><form><input type="text" readonly="readonly" th:value="${orderHandlowiecPaymentDate}"></form></td>
+                </tr>
                 </tbody>
             </table>
-            <div class="order_details_admin_comment">
-                <form id="raportRozliczenie" method="post" onsubmit="return confirm('Czy na pewno chcesz to zrobić?')">
-                    <label class="o-d-a-c_pdd label">Komentarz</label>
-                    <input class="o-d-a-c_pdd input" type="text" placeholder="Brak komentarza." id="comment" name="comment">
-                    <input type="hidden" th:value="${completeOrder.order.id}" id="orderID" name="orderID">
-                    <input type="submit" class="admin_button" value="Zatwierdź" th:formaction="@{/raporty/admin/approve}">
-                    <input type="submit" class="admin_button" value="Odrzuć" th:formaction="@{/raporty/admin/reject}">
-                </form>
-            </div>
         </div>
+    </div>
+    <div class="order_details_admin_comment">
+        <form id="raportRozliczenie" method="post" onsubmit="return confirm('Czy na pewno chcesz to zrobić?')">
+            <label class="o-d-a-c_pdd label">Komentarz</label>
+            <input class="o-d-a-c_pdd input" type="text" placeholder="Brak komentarza." id="comment" name="comment">
+            <input type="hidden" th:value="${completeOrder.order.id}" id="orderID" name="orderID">
+            <input type="submit" class="admin_button" value="Zatwierdź" th:formaction="@{/raporty/admin/approve}">
+            <input type="submit" class="admin_button" value="Odrzuć" th:formaction="@{/raporty/admin/reject}">
+        </form>
     </div>
 </div>
 <footer class="footer">

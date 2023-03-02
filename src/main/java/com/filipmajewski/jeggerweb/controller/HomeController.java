@@ -1,12 +1,8 @@
 package com.filipmajewski.jeggerweb.controller;
 
-import com.filipmajewski.jeggerweb.container.CompleteOrder;
-import com.filipmajewski.jeggerweb.container.DCon;
-import com.filipmajewski.jeggerweb.container.Hcon;
-import com.filipmajewski.jeggerweb.container.RozliczenieContainer;
+import com.filipmajewski.jeggerweb.container.*;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
-import org.apache.coyote.http11.filters.IdentityOutputFilter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.*;
@@ -43,6 +40,10 @@ public class HomeController {
 
     private final UserRepository userRepository;
 
+    private final PaymentDealerRepository paymentDealerRepository;
+
+    private final PaymentHandlowiecRepository paymentHandlowiecRepository;
+
     private final HistoryRepository historyRepository;
 
     private final EventRepository eventRepository;
@@ -59,6 +60,8 @@ public class HomeController {
                           OrderHandlowiecRepository orderHandlowiecRepository,
                           DealerRepository dealerRepository,
                           UserRepository userRepository,
+                          PaymentDealerRepository paymentDealerRepository,
+                          PaymentHandlowiecRepository paymentHandlowiecRepository,
                           HistoryRepository historyRepository,
                           EventRepository eventRepository,
                           PasswordResetRepository passwordResetRepository) {
@@ -69,6 +72,8 @@ public class HomeController {
         this.orderHandlowiecRepository = orderHandlowiecRepository;
         this.dealerRepository = dealerRepository;
         this.userRepository = userRepository;
+        this.paymentDealerRepository = paymentDealerRepository;
+        this.paymentHandlowiecRepository = paymentHandlowiecRepository;
         this.historyRepository = historyRepository;
         this.eventRepository = eventRepository;
         this.passwordResetRepository = passwordResetRepository;
@@ -233,7 +238,7 @@ public class HomeController {
                         0,
                         r.getDealerPrice(),
                         r.getDealerDocument()
-                        );
+                );
 
                 OrderHandlowiec orderHandlowiec = new OrderHandlowiec(
                         r.getDate(),
@@ -388,8 +393,46 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/raporty", method = RequestMethod.GET)
-    public String reportsPage() {
-        return "reports.html";
+    public ModelAndView reportsPage(HttpSession session) {
+
+        ModelAndView mv = new ModelAndView("reports.html");
+
+        User user = getAuthenticatedUser();
+        List<OrderStatus> orderStatusList;
+        List<Feed> feedList = new ArrayList<>();
+
+        switch (user.getRole()) {
+            case "USER" -> {
+                orderStatusList = orderStatusRepository.findAllByStatus(3);
+                orderStatusList.forEach(e -> {
+                    Order order = orderRepository.findByIdAndUserID(e.getOrderID(), user.getId());
+                    if(order != null) feedList.add(new Feed(order.getId(), "ZAAKCEPTOWANE"));
+                });
+            }
+            case "ACCOUNTANT" -> {
+                orderStatusList = orderStatusRepository.findAllByStatus(4);
+                orderStatusList.forEach(e -> {
+                    PaymentDealer paymentD = paymentDealerRepository.findByOrderID(e.getOrderID());
+                    PaymentHandlowiec paymentH = paymentHandlowiecRepository.findByOrderIDAndPayment(e.getOrderID(), 1, 4);
+                    if(paymentH != null) feedList.add(new Feed(paymentH.getOrderID(), "DO PŁATNOŚCI"));
+                    if(paymentD != null) feedList.add(new Feed(paymentD.getOrderID(), "DO PŁATNOŚCI"));
+                });
+            }
+            case "ADMIN" -> {
+                orderStatusList = orderStatusRepository.findAllByStatus(2, 4);
+                orderStatusList.forEach(e -> {
+                    if (e.getStatus() == 2) feedList.add(new Feed(e.getOrderID(), "DO AKCEPTACJI"));
+                    else {
+                        PaymentHandlowiec payment = paymentHandlowiecRepository.findByOrderIDAndPayment(e.getOrderID(), 2, 3);
+                        if(payment != null) feedList.add(new Feed(payment.getOrderID(), "DO PŁATNOŚCI"));
+                    }
+                });
+            }
+        }
+
+        mv.addObject("feedList", feedList);
+
+        return mv;
     }
 
     @RequestMapping(value = "/ustawienia", method = RequestMethod.GET)

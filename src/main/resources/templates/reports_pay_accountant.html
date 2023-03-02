@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>JEGGER</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.jpg}">
+  <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css}" type="text/css"/>
+
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav_logo">
+    <img th:src="@{/images/logo_long.jpg}" alt="JEGGER logo">
+  </div>
+  <div class="nav_menu">
+    <ul>
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/rozliczenia}">Rozliczenia</a></li>
+      <li><a th:href="@{/dealerzy}">Dealrzy</a></li>
+      <li><a th:href="@{/raporty}">Zadania</a></li>
+      <li><a th:href="@{/ustawienia}">Ustawienia</a></li>
+    </ul>
+  </div>
+  <div class="nav_logout">
+    <a th:href="@{/logout}"><button>Wyloguj</button></a>
+  </div>
+</nav>
+<div class="page_content">
+  <div class="orders_header">
+    <div class="orders_header_first">
+      <span class="orders_header_first_text">Płatność</span><br>
+      <span class="error_message_span" th:text="${paymentError}"></span>
+    </div>
+    <div class="orders_header_second"></div>
+  </div>
+  <div class="orders_new_container">
+    <div class="orders_new_content">
+      <form id="addPayoff" method="post">
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Numer zlecenia</span>
+          <input type="number" readonly="readonly" th:name="@{nr_zlec}" th:value="${orderID}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details" th:text="${person} ? 'Nazwa handlowca' : 'Nazwa dealera'"></span>
+          <input type="text" readonly="readonly" th:value="${name}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Dokument płatności</span>
+          <input type="text" readonly="readonly" th:value="${document}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Sposób płatności</span>
+          <input type="text" readonly="readonly" th:value="${payment}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Kwota do wypłaty</span>
+          <input type="text" readonly="readonly" th:value="${price}">
+        </div>
+      </form>
+      <div class="order_details_admin_comment">
+        <form id="raportRozliczenie" method="post" onsubmit="return confirm('Czy na pewno chcesz to zrobić?')">
+          <label class="o-d-a-c_pdd label">Komentarz</label>
+          <input class="o-d-a-c_pdd input" type="text" placeholder="Brak komentarza." id="comment" name="comment">
+          <input type="hidden" th:value="${orderID}" id="orderID" th:name="@{orderID}">
+          <input type="hidden" th:value="${person}" id="person" th:name="@{person}">
+          <input type="submit" class="admin_button" value="Zatwierdź" th:formaction="@{/raporty/accountant/payment/approve}">
+          <input type="submit" class="admin_button" value="Odrzuć" th:formaction="@{/raporty/admin/payment/reject}">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="footer_content">
+    Filip Majewski Web Development © Wszystkie prawa zastrzeżone
+  </div>
+</footer>
+</body>
+</html>

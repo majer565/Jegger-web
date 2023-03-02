@@ -38,6 +38,7 @@
         </div>
         <div class="orders_header_second">
             <ul>
+                <li><a id="reports" th:href="@{/raporty}">Aktualności</a></li>
                 <li><a id="reports_orders" th:href="@{/raporty/rozliczenia}">Zaakceptowane rozliczenia</a></li>
                 <li><a id="reports_payment" th:href="@{/raporty/rozlicz}">Rozlicz płatność</a></li>
                 <li><a id="reports_admin" th:href="@{/raporty/admin}">Akceptacja rozliczeń</a></li>
@@ -53,6 +54,7 @@
                     <th>Handlowiec</th>
                     <th>Data akceptacji</th>
                     <th>Szczegóły</th>
+                    <th>Modyfikuj płatność</th>
                     <th>Wyślij do płatności</th>
                 </tr>
                 </thead>
@@ -63,6 +65,9 @@
                     <td th:text="${report.orderAcceptDate}"></td>
                     <td>
                         <a th:href="@{/rozliczenia/details(nr=${report.orderNumber})}"><button type="button" class="orders_table_info_button">INFO</button></a>
+                    </td>
+                    <td>
+                        <a th:href="@{/raporty/modify/payment(nr=${report.orderNumber})}"><button type="button" class="orders_table_info_button">UPDATE</button></a>
                     </td>
                     <td>
                         <form method="POST" th:action="@{/raporty/platnosc/send(nr=${report.orderNumber})}" onsubmit="return confirm('Czy na pewno chcesz wysłać rozliczenie?')">

@@ -38,6 +38,7 @@
         </div>
         <div class="orders_header_second">
             <ul>
+                <li><a id="reports" th:href="@{/raporty}">Aktualności</a></li>
                 <li><a id="reports_orders" th:href="@{/raporty/rozliczenia}">Zaakceptowane rozliczenia</a></li>
                 <li><a id="reports_payment" th:href="@{/raporty/rozlicz}">Rozlicz płatność</a></li>
                 <li><a id="reports_admin" th:href="@{/raporty/admin}">Akceptacja rozliczeń</a></li>
@@ -45,6 +46,22 @@
         </div>
     </div>
     <div class="orders_table_container">
+        <div class="feed_table_content">
+            <table>
+                <thead>
+                <tr>
+                    <th>Numer zlecenia</th>
+                    <th>Rodzaj</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="feed: ${feedList}">
+                    <td th:text="${feed.orderID}"></td>
+                    <td th:text="${feed.type}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <footer class="footer">

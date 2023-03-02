@@ -46,37 +46,38 @@
           <input type="text" required="required" th:name="@{nr_fakt}" th:value="${completeOrder.order.invoiceNumber}">
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota faktury</span>
-          <input type="number" required="required" th:name="@{kw_fakt}" min="1" th:value="${completeOrder.order.invoicePrice}">
-        </div>
-        <div class="orders_new_input_box">
           <span class="orders_new_input_details">Handlowiec Dealera</span>
-          <!--<input type="text" required="required" th:name="@{handl_dealer}" th:value="${completeOrder.orderHandlowiec.name}">-->
           <select required="required" th:name="@{handl_dealer}">
-            <option th:value="-1">...</option>
+            <option hidden value>...</option>
+            <option th:value="-1">Brak</option>
             <option th:each="p : ${dealerHList}" th:value="${p.id}" th:text="${p.handlowiec}"/>
           </select>
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota początkowa</span>
+          <span class="orders_new_input_details">Kwota katalogowa</span>
           <input type="number" required="required" id="kw_pocz" min="1" th:name="@{kw_pocz}" th:value="${completeOrder.order.originalPrice}">
         </div>
         <div class="orders_new_input_box">
           <span class="orders_new_input_details">Rabat</span>
           <select required="required" id="rabat" onchange="val()" th:name="@{rabat}">
-            <option value="10">10%</option>
-            <option value="12">12%</option>
+            <option hidden value>...</option>
+            <option th:each="i : ${#numbers.sequence(1, 15)}" th:value="${i}" th:text="${i}"></option>
           </select>
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota rabatu</span>
+          <span class="orders_new_input_details">Kwota po rabacie</span>
           <input type="number" readonly="readonly" min="1" id="kw_rabat" th:name="@{kw_rabat}">
         </div>
         <div class="orders_new_input_box">
-          <span class="orders_new_input_details">Kwota rozliczenia</span>
+          <span class="orders_new_input_details">Kwota faktury</span>
+          <input type="number" required="required" th:name="@{kw_fakt}" min="1" th:value="${completeOrder.order.invoicePrice}">
+        </div>
+        <div class="orders_new_input_box">
+          <span class="orders_new_input_details">Róźnica</span>
           <input type="text" readonly="readonly" id="kw_rozl" th:name="@{kw_rozl}">
         </div>
         <div class="orders_new_submit_holder">
+          <input class="orders_modify_submit" type="submit" value="Anuluj" th:formaction="@{/rozliczenia/open}" formmethod="get">
           <input class="orders_modify_submit" type="submit" value="Modyfikuj rozliczenie">
         </div>
       </form>
@@ -98,9 +99,11 @@
 
     let result = kw_pocz.value * rabat;
 
-    kw_rabat.value = Math.round((result + Number.EPSILON) * 100) / 100;
+    //kw_rabat.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
+    kw_rabat.value = Math.ceil(kw_pocz.value - result);
 
-    kw_rozl.value = Math.round(((kw_pocz.value - result) + Number.EPSILON) * 100) / 100;
+    //kw_rozl.value = Math.round(((result) + Number.EPSILON) * 100) / 100;
+    kw_rozl.value = Math.ceil(result);
   }
 </script>
 </body>
