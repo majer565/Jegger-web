@@ -1,11 +1,14 @@
 package com.filipmajewski.jeggerweb.controller;
 
 import com.filipmajewski.jeggerweb.container.CompleteOrder;
+import com.filipmajewski.jeggerweb.container.EmailMessages;
 import com.filipmajewski.jeggerweb.container.NewOrderDetails;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -621,12 +624,19 @@ public class OrdersController {
             orderStatus.setStatus(2);
             orderStatusRepository.save(orderStatus);
 
+            EmailMessages emailMessages = new EmailMessages(
+                    EmailMessages.MAP_TAKS_TYPE.get("ORDER_TO_ACCEPTANCE"),
+                    refactorTimestamp(new Timestamp(System.currentTimeMillis())),
+                    getAuthenticatedUser().getHandlowiec()
+            );
+
             //Add emiail sender
 
             rdir.addFlashAttribute("openOrderSuccess", "Pomyślnie wysłano rozliczenie.");
             return mv;
 
         } catch (Exception e) {
+            e.printStackTrace();
             rdir.addFlashAttribute("openOrderError", "Nie udało się wysłać rozliczenia.");
             return mv;
         }

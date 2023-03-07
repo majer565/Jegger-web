@@ -240,7 +240,7 @@ body{
 #order_search_by {
     float: right;
     margin-bottom: 15px;
-    color: #ddd;
+    color: black;
 }
 
 #order_search_by select {

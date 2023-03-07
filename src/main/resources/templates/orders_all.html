@@ -50,8 +50,8 @@
             <option value="0">Numer zlecenia</option>
             <option value="1">Data</option>
             <option value="2">Handlowiec</option>
-            <option value="3">Dealer</option>
-            <option value="4">Handlowiec Dealera</option>
+            <option value="5">Dealer</option>
+            <option value="6">Handlowiec Dealera</option>
         </select>
         </div>
         <div class="orders_table_content">
@@ -103,7 +103,7 @@
 
         let searchInput = $('.dataTables_filter input');
 
-        $(searchInput).on('change', function() {
+        $(searchInput).on('input', function() {
             let column = table.column($('#column-select').val());
             let searchTerm = searchInput.val();
             table.columns().search('').draw();

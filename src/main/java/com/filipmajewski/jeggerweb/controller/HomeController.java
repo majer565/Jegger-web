@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Controller
 public class HomeController {
@@ -507,10 +508,9 @@ public class HomeController {
 
     private List<CompleteOrder> getUserCompleteOrderList(List<Order> orderList, User user) {
 
-        List<CompleteOrder> completeOrderList = new ArrayList<>();
+        ConcurrentLinkedQueue<CompleteOrder> completeOrderList = new ConcurrentLinkedQueue<>();
 
-        for(Order o : orderList) {
-
+        orderList.parallelStream().forEachOrdered(o -> {
             int orderID = o.getId();
 
             completeOrderList.add(new CompleteOrder(
@@ -520,17 +520,16 @@ public class HomeController {
                     orderHandlowiecRepository.findByOrderID(orderID),
                     user
             ));
-        }
+        });
 
-        return completeOrderList;
+        return completeOrderList.stream().toList();
     }
 
     private List<CompleteOrder> getAdminCompleteOrderList(List<Order> orderList) {
 
-        List<CompleteOrder> completeOrderList = new ArrayList<>();
+        ConcurrentLinkedQueue<CompleteOrder> completeOrderList = new ConcurrentLinkedQueue<>();
 
-        for(Order o : orderList) {
-
+        orderList.parallelStream().forEachOrdered(o -> {
             int orderID = o.getId();
 
             User orderUser = userRepository.findById(o.getUserID()).orElse(new User());
@@ -541,9 +540,9 @@ public class HomeController {
                     orderHandlowiecRepository.findByOrderID(orderID),
                     orderUser
             ));
-        }
+        });
 
-        return completeOrderList;
+        return completeOrderList.stream().toList();
     }
 
 

@@ -1,9 +1,7 @@
 package com.filipmajewski.jeggerweb.container;
 
-import org.hibernate.annotations.Immutable;
 import org.springframework.mail.SimpleMailMessage;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EmailMessages {
@@ -28,19 +26,22 @@ public class EmailMessages {
         this.HANDLOWIEC = HANDLOWIEC;
     }
 
-    public SimpleMailMessage createMailMessage() {
+    public SimpleMailMessage createMailMessage(String to, String subject) {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
         String HEADER = "Pojawiło się nowe zadanie:";
         String FOOTER = "Ta wiadomość została wysłana automatycznie. Prosimy nie odpowiadać na tę wiadomość.";
 
+        message.setFrom("noreplyfilip@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
         message.setText(
                 HEADER + "\n\n" +
                 "\bTyp: \b" + TASK_TYPE + "\n" +
                 "\bOd: \b" + HANDLOWIEC + "\n" +
                 "\bData: \b" + DATE + "\n\n" +
-                        FOOTER
+                 FOOTER
         );
 
         return message;
