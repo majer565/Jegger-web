@@ -1,14 +1,13 @@
 package com.filipmajewski.jeggerweb.controller;
 
 import com.filipmajewski.jeggerweb.container.CompleteOrder;
-import com.filipmajewski.jeggerweb.container.EmailMessages;
 import com.filipmajewski.jeggerweb.container.NewOrderDetails;
+import com.filipmajewski.jeggerweb.email.EmailService;
+import com.filipmajewski.jeggerweb.email.EmailTaskType;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,6 +59,8 @@ public class OrdersController {
 
     private final EventRepository eventRepository;
 
+    private final EmailService emailService;
+
     @Autowired
     public OrdersController(OrderRepository orderRepository,
                             OrderStatusRepository orderStatusRepository,
@@ -71,7 +72,8 @@ public class OrdersController {
                             HistoryRepository historyRepository,
                             PaymentDealerRepository paymentDealerRepository,
                             PaymentHandlowiecRepository paymentHandlowiecRepository,
-                            EventRepository eventRepository) {
+                            EventRepository eventRepository,
+                            EmailService emailService) {
 
         this.orderRepository = orderRepository;
         this.orderStatusRepository = orderStatusRepository;
@@ -84,6 +86,7 @@ public class OrdersController {
         this.paymentDealerRepository = paymentDealerRepository;
         this.paymentHandlowiecRepository = paymentHandlowiecRepository;
         this.eventRepository = eventRepository;
+        this.emailService = emailService;
     }
 
     @RequestMapping(value = "/rozliczenia/details", method = RequestMethod.GET)
@@ -621,16 +624,14 @@ public class OrdersController {
 
             OrderStatus orderStatus = orderStatusRepository.findByOrderID(nr);
 
-            orderStatus.setStatus(2);
-            orderStatusRepository.save(orderStatus);
-
-            EmailMessages emailMessages = new EmailMessages(
-                    EmailMessages.MAP_TAKS_TYPE.get("ORDER_TO_ACCEPTANCE"),
-                    refactorTimestamp(new Timestamp(System.currentTimeMillis())),
+            emailService.sendEmail(
+                    "xxmajerxx@gmail.com",
+                    EmailTaskType.ORDER_TO_ACCEPTANCE.getTaskType(),
                     getAuthenticatedUser().getHandlowiec()
             );
 
-            //Add emiail sender
+            orderStatus.setStatus(2);
+            orderStatusRepository.save(orderStatus);
 
             rdir.addFlashAttribute("openOrderSuccess", "Pomyślnie wysłano rozliczenie.");
             return mv;

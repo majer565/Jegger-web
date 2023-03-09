@@ -4,10 +4,11 @@ import com.filipmajewski.jeggerweb.container.AcceptedOrderReport;
 import com.filipmajewski.jeggerweb.container.CompleteOrder;
 import com.filipmajewski.jeggerweb.container.OpenOrderReport;
 import com.filipmajewski.jeggerweb.container.PaymentInfo;
+import com.filipmajewski.jeggerweb.email.EmailService;
+import com.filipmajewski.jeggerweb.email.EmailTaskType;
 import com.filipmajewski.jeggerweb.entity.*;
 import com.filipmajewski.jeggerweb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,25 +27,27 @@ import java.util.List;
 @Controller
 public class ReportsController {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    private OrderStatusRepository orderStatusRepository;
+    private final OrderStatusRepository orderStatusRepository;
 
-    private OrderDealerRepository orderDealerRepository;
+    private final OrderDealerRepository orderDealerRepository;
 
-    private OrderHandlowiecRepository orderHandlowiecRepository;
+    private final OrderHandlowiecRepository orderHandlowiecRepository;
 
-    private DealerHandlowcyRepository dealerHandlowcyRepository;
+    private final DealerHandlowcyRepository dealerHandlowcyRepository;
 
-    private DealerRepository dealerRepository;
+    private final DealerRepository dealerRepository;
 
-    private HistoryRepository historyRepository;
+    private final HistoryRepository historyRepository;
 
     private final PaymentDealerRepository paymentDealerRepository;
 
     private final PaymentHandlowiecRepository paymentHandlowiecRepository;
+
+    private final EmailService emailService;
 
     @Autowired
     public ReportsController(UserRepository userRepository,
@@ -56,7 +59,8 @@ public class ReportsController {
                              DealerRepository dealerRepository,
                              HistoryRepository historyRepository,
                              PaymentDealerRepository paymentDealerRepository,
-                             PaymentHandlowiecRepository paymentHandlowiecRepository) {
+                             PaymentHandlowiecRepository paymentHandlowiecRepository,
+                             EmailService emailService) {
 
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
@@ -68,6 +72,7 @@ public class ReportsController {
         this.historyRepository = historyRepository;
         this.paymentDealerRepository = paymentDealerRepository;
         this.paymentHandlowiecRepository = paymentHandlowiecRepository;
+        this.emailService = emailService;
     }
 
     @RequestMapping(value = "/raporty/admin", method = RequestMethod.GET)
@@ -179,6 +184,8 @@ public class ReportsController {
             Order order = orderRepository.findById(orderID).orElse(null);
             if(order == null) throw new NullPointerException();
 
+            sendEmail(orderID, EmailTaskType.ACCEPTED_ORDER.getTaskType());
+
             order.setDealerAcceptance(true);
             order.setHandlowiecAcceptance(true);
             Timestamp date = new Timestamp(System.currentTimeMillis());
@@ -209,6 +216,8 @@ public class ReportsController {
             History history = new History(orderID, comment);
 
             OrderStatus status = orderStatusRepository.findByOrderID(orderID);
+
+            sendEmail(orderID, EmailTaskType.REJECTED_ORDER.getTaskType());
 
             status.setStatus(0);
             orderStatusRepository.save(status);
@@ -327,11 +336,17 @@ public class ReportsController {
         try {
 
             OrderStatus orderStatus = orderStatusRepository.findByOrderID(nr);
+            PaymentHandlowiec paymentHandlowiec = paymentHandlowiecRepository.findByOrderID(nr);
+
+            //EMAIL CHANGE EMAILS
+            if(paymentHandlowiec.getPayment() == 2 || paymentHandlowiec.getPayment() == 3) {
+                sendEmail("jegger@jegger.pl", EmailTaskType.ORDER_TO_PAYMENT.getTaskType());
+            } else {
+                sendEmail("ksiegowy@jegger.pl", EmailTaskType.ORDER_TO_PAYMENT.getTaskType());
+            }
 
             orderStatus.setStatus(4);
             orderStatusRepository.save(orderStatus);
-
-            //Add emiail sender
 
             rdir.addFlashAttribute("reportSuccess", "Pomyślnie wysłano rozliczenie do płatności.");
             return mv;
@@ -472,6 +487,7 @@ public class ReportsController {
             order.setHandlowiecAcceptanceDate(date);
             paymentHandlowiec.setPaymentDate(date);
 
+
             //Add email sender
 
             historyRepository.save(history);
@@ -552,7 +568,7 @@ public class ReportsController {
 
             OrderStatus status = orderStatusRepository.findByOrderID(orderID);
 
-            //Add email sender
+            sendEmail(orderID, EmailTaskType.REJECTED_PAYMENT.getTaskType());
 
             status.setStatus(3);
             orderStatusRepository.save(status);
@@ -590,6 +606,28 @@ public class ReportsController {
                 }
             }
         }
+    }
+
+    private void sendEmail(int orderID, String type) {
+        Order order = orderRepository.findById(orderID).orElse(null);
+        if(order == null) throw new NullPointerException();
+
+        User userToEmail = userRepository.findById(order.getUserID()).orElse(null);
+        if(userToEmail == null) throw new NullPointerException();
+
+        emailService.sendEmail(
+                userToEmail.getUsername(),
+                type,
+                getAuthenticatedUser().getHandlowiec()
+        );
+    }
+
+    private void sendEmail(String to, String type) {
+        emailService.sendEmail(
+                to,
+                type,
+                getAuthenticatedUser().getHandlowiec()
+        );
     }
 
     private String convertPayment(int payment) {
